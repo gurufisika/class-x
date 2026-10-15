@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Fisika Kelas X - SMAN 1 HALTIM</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Inter"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            // Palet Warna Alami & Otentik getnudge.info
+            primary: {
+              50: '#fcfdfd',
+              100: '#f3f2eb',
+              200: '#e8e6d9',
+              300: '#dcd9c9',
+              400: '#c5c1af',
+              500: '#a9a593',
+              600: '#8c8976',
+              700: '#6f6c5b',
+              800: '#545244',
+              900: '#3b392f',
+              950: '#26251e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --primary-50: #fcfdfd;
+      --primary-100: #f3f2eb;
+      --primary-200: #e8e6d9;
+      --primary-300: #dcd9c9;
+      --primary-700: #6f6c5b;
+      --primary-900: #3b392f;
+      --primary-950: #26251e;
+    }
+
+    body {
+      background-color: var(--primary-50);
+      color: var(--primary-900);
+      font-family: 'Inter', sans-serif;
+      letter-spacing: -0.018em;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    ::selection {
+      background-color: var(--primary-950);
+      color: var(--primary-50);
+    }
+
+    /* Highlight teks bergaya Nudge */
+    .nudge-highlight {
+      font-style: normal;
+      background: linear-gradient(to right, rgba(232, 230, 217, 0.7), rgba(220, 217, 201, 0.7));
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      border-right: 3px solid #c5c1af;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-primary-50 text-primary-900 selection:bg-primary-950 selection:text-primary-50">
+
+  <!-- FLOATING PILL NAVBAR -->
+  <nav class="fixed top-0 z-50 md:p-6 w-full flex justify-center transition-transform duration-300 ease-out" aria-label="Main navigation">
+    <div class="w-full md:max-w-4xl md:rounded-full bg-primary-100/90 hover:bg-primary-100/95 backdrop-blur-md border border-primary-200/90 transition-all duration-300 shadow-sm">
+      <div class="flex items-center justify-between p-2.5 sm:px-4 sm:py-2.5">
+        <!-- Logo & Nama Sekolah -->
+        <a href="#" class="flex items-center gap-2.5 group">
+          <div class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center transition-transform group-hover:scale-105 shadow-xs border border-primary-300/50 bg-white p-0.5 shrink-0">
+            <img src="logo-sman1-haltim.png" alt="Logo SMAN 1 HALTIM" class="w-full h-full object-contain">
+          </div>
+          <div>
+            <span class="font-medium text-sm text-primary-950 tracking-tight block whitespace-nowrap">
+              Fisika SMAN 1 HALTIM
+            </span>
+          </div>
+        </a>
+
+        <!-- Desktop Menu Navigasi Rapi & Seimbang -->
+        <div class="hidden md:flex items-center gap-1 bg-primary-200/40 p-1 rounded-full border border-primary-200/60">
+          <a href="#about" class="px-3.5 py-1.5 text-xs font-medium text-primary-700 hover:text-primary-950 hover:bg-primary-50 rounded-full transition-all">
+            Tentang
+          </a>
+          <a href="#materi" class="px-3.5 py-1.5 text-xs font-medium text-primary-700 hover:text-primary-950 hover:bg-primary-50 rounded-full transition-all">
+            Materi
+          </a>
+          <a href="#pengumuman" class="px-3.5 py-1.5 text-xs font-medium text-primary-700 hover:text-primary-950 hover:bg-primary-50 rounded-full transition-all">
+            Pengumuman
+          </a>
+          <a href="#data-siswa" class="px-3.5 py-1.5 text-xs font-medium text-primary-700 hover:text-primary-950 hover:bg-primary-50 rounded-full transition-all">
+            Presensi & Nilai
+          </a>
+        </div>
+
+        <!-- Tombol Portal Guru Bersih -->
+        <div>
+          <a href="admin.html" class="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-950 text-primary-50 rounded-full hover:bg-primary-900 active:scale-95 transition-all text-xs font-medium shadow-xs">
+            <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+            <span>Portal Guru</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION WITH TEACHER PHOTO -->
+  <header class="bg-primary-50 bg-gradient-to-b from-primary-300/35 via-primary-50 to-primary-50 pt-28 sm:pt-36 pb-16 md:pb-24 border-b border-primary-200/60">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+        
+        <!-- Kolom Kiri: Teks & Informasi Utama -->
+        <div class="lg:col-span-7 flex flex-col items-start text-left">
+          
+          <!-- Pill Badge dengan Orange Dot -->
+          <a href="#pengumuman" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-100 hover:bg-primary-200/70 transition-colors text-xs font-medium text-primary-950 border border-primary-200 mb-6">
+            <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+            <span>Tahun Ajaran 2026/2027 • Kurikulum Merdeka</span>
+            <i data-lucide="arrow-right" class="w-3 h-3 text-primary-600"></i>
+          </a>
+
+          <!-- Judul Bersih & Rapi -->
+          <h1 class="text-3xl sm:text-5xl lg:text-[3.25rem] font-medium tracking-tight text-primary-950 leading-[1.18] text-balance mb-5">
+            Belajar Fisika lebih terstruktur, mudah, dan menyenangkan.
+          </h1>
+
+          <!-- Deskripsi Rapi & Ringkas -->
+          <p class="text-sm sm:text-base text-primary-700 leading-relaxed max-w-xl font-normal mb-8">
+            Portal resmi pembelajaran Fisika Kelas X (X-1 s/d X-5) SMAN 1 HALTIM. Akses rangkuman modul, video pembahasan konsep, dan pantau rekap presensi serta nilai harian Anda secara transparan.
+          </p>
+
+          <!-- Tombol Aksi -->
+          <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto mb-10">
+            <a href="#data-siswa" class="inline-flex items-center justify-center font-medium transition-all px-5 py-3 bg-primary-950 text-primary-50 rounded-full hover:bg-primary-900 active:scale-95 text-sm">
+              Cek Nilai & Presensi
+            </a>
+            <a href="#materi" class="inline-flex items-center justify-center font-medium transition-all px-5 py-3 bg-primary-100 hover:bg-primary-200/70 text-primary-950 border border-primary-200 rounded-full active:scale-95 text-sm">
+              Lihat Modul Belajar
+            </a>
+          </div>
+
+          <!-- Highlight 3 Poin Ringkas -->
+          <div class="w-full pt-6 border-t border-primary-200 grid grid-cols-3 gap-4">
+            <div>
+              <div class="text-xl sm:text-2xl font-medium text-primary-950">5 Kelas</div>
+              <div class="text-xs text-primary-600 mt-0.5">X-1 sampai X-5</div>
+            </div>
+            <div>
+              <div class="text-xl sm:text-2xl font-medium text-primary-950">Terbuka</div>
+              <div class="text-xs text-primary-600 mt-0.5">Presensi & Nilai Live</div>
+            </div>
+            <div>
+              <div class="text-xl sm:text-2xl font-medium text-primary-950">Mandiri</div>
+              <div class="text-xs text-primary-600 mt-0.5">E-Modul & Video</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kolom Kanan: Foto Pak Dul (Guru Fisika) dalam Bingkai Nudge -->
+        <div class="lg:col-span-5 flex justify-center">
+          <div class="relative w-full max-w-xs sm:max-w-sm">
+            
+            <!-- Card Pembungkus Foto -->
+            <div class="bg-primary-100 p-3 rounded-3xl border border-primary-200 shadow-sm transition-all hover:border-primary-300">
+              <div class="aspect-[3/4] w-full overflow-hidden rounded-2xl bg-primary-200 relative">
+                <img 
+                  src="pak-dul.jpg" 
+                  alt="Pak Dul - Guru Fisika SMAN 1 HALTIM" 
+                  class="w-full h-full object-cover object-top"
+                  loading="eager"
+                >
+              </div>
+
+              <!-- Caption Profil di Bawah Foto -->
+              <div class="mt-3 px-2 py-1 flex items-center justify-between text-left">
+                <div>
+                  <div class="text-xs font-semibold text-primary-950">Pak Dul</div>
+                  <div class="text-[11px] text-primary-600">Guru Fisika Kelas X</div>
+                </div>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-50 text-[10px] font-medium text-primary-800 border border-primary-200">
+                  <img src="logo-sman1-haltim.png" alt="Logo SMAN 1 HALTIM" class="w-3.5 h-3.5 object-contain">
+                  <span>SMAN 1 HALTIM</span>
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- STATEMENT SECTION (NUDGE STYLE) -->
+  <section id="about" class="py-14 md:py-20">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <span class="inline-block font-medium rounded-full bg-primary-100 text-primary-800 px-3 py-1 text-xs mb-5 border border-primary-200/80">
+        Prinsip Pembelajaran
+      </span>
+      <p class="text-xl md:text-3xl font-medium tracking-tight text-primary-950 leading-snug text-pretty">
+        Fisika bukan sekadar rumus matematika, melainkan seni mengamati dan memahami keteraturan alam semesta. Melalui portal ini, seluruh siswa kelas X dapat mempersiapkan diri sebelum praktikum, memperdalam konsep secara fleksibel, serta memantau progres belajarnya setiap hari.
+      </p>
+      <hr class="w-full border-t border-primary-200 mt-10 md:mt-14">
+    </div>
+  </section>
+
+  <!-- SECTION MODUL PEMBELAJARAN (TWO-COLUMN MINIMALIST NUDGE) -->
+  <section id="materi" class="py-12 md:py-18">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <!-- Section Header -->
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+        <div>
+          <span class="inline-block font-medium rounded-full bg-primary-100 text-primary-800 px-3 py-1 text-xs mb-2 border border-primary-200/80">
+            Sumber Belajar
+          </span>
+          <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-primary-950">
+            Modul Pembelajaran & Video Konsep
+          </h2>
+        </div>
+
+        <!-- Search Input -->
+        <div class="relative w-full sm:w-64">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-primary-500"></i>
+          <input 
+            type="text" 
+            id="search-materi" 
+            placeholder="Cari materi bab..." 
+            class="w-full pl-9 pr-4 py-2 bg-primary-100/70 border border-primary-200 text-xs text-primary-950 placeholder-primary-500 rounded-full focus:outline-none focus:border-primary-950 transition"
+          >
+        </div>
+      </div>
+
+      <!-- Materials List Container -->
+      <div id="materi-container" class="space-y-3.5">
+        <div class="py-10 text-center text-primary-500 text-sm">
+          <i data-lucide="loader" class="w-5 h-5 animate-spin mx-auto mb-2 text-primary-950"></i>
+          Memuat modul pembelajaran...
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION PAPAN PENGUMUMAN -->
+  <section id="pengumuman" class="py-12 md:py-18 border-t border-primary-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8">
+        <div>
+          <span class="inline-block font-medium rounded-full bg-primary-100 text-primary-800 px-3 py-1 text-xs mb-2 border border-primary-200/80">
+            Pemberitahuan
+          </span>
+          <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-primary-950">
+            Papan Pengumuman Guru
+          </h2>
+        </div>
+        <p class="text-xs sm:text-sm text-primary-600 max-w-sm">
+          Informasi seputar praktikum, jadwal tugas, dan ulangan harian.
+        </p>
+      </div>
+
+      <!-- Announcement Cards Grid -->
+      <div id="announcement-container" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="col-span-full py-10 text-center text-primary-500 text-sm">
+          <i data-lucide="loader" class="w-5 h-5 animate-spin mx-auto mb-2 text-primary-950"></i>
+          Memuat pengumuman...
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION DATA SISWA: NILAI & KEHADIRAN -->
+  <section id="data-siswa" class="py-14 md:py-20 border-t border-primary-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="mb-8">
+        <span class="inline-block font-medium rounded-full bg-primary-100 text-primary-800 px-3 py-1 text-xs mb-2 border border-primary-200/80">
+          Transparansi Akademik
+        </span>
+        <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-primary-950">
+          Rekap Kehadiran & Nilai Siswa
+        </h2>
+        <p class="text-xs sm:text-sm text-primary-700 mt-1 max-w-xl">
+          Pilih kelas Anda (X-1 s/d X-5) dan ketikkan nama untuk memantau kehadiran serta nilai tugas dan ujian.
+        </p>
+      </div>
+
+      <!-- Controls: Tabs & Search Bar -->
+      <div class="p-2 sm:p-2.5 bg-primary-100/70 border border-primary-200 rounded-2xl sm:rounded-full mb-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <!-- Class Filter Buttons Rapi & Ringkas -->
+        <div class="flex items-center gap-1 bg-primary-200/50 p-1 rounded-full border border-primary-200/80 overflow-x-auto w-full sm:w-auto scrollbar-none" id="class-tabs">
+          <button onclick="changeClassFilter('Semua')" class="class-btn px-3.5 py-1 rounded-full text-xs font-medium transition whitespace-nowrap text-primary-700 hover:text-primary-950 hover:bg-primary-50/80" data-class="Semua">
+            Semua
+          </button>
+          <button onclick="changeClassFilter('X-1')" class="class-btn px-3.5 py-1 rounded-full text-xs font-medium transition whitespace-nowrap bg-primary-950 text-primary-50 shadow-xs" data-class="X-1">
+            X-1
+          </button>
+          <button onclick="changeClassFilter('X-2')" class="class-btn px-3.5 py-1 rounded-full text-xs font-medium transition whitespace-nowrap text-primary-700 hover:text-primary-950 hover:bg-primary-50/80" data-class="X-2">
+            X-2
+          </button>
+          <button onclick="changeClassFilter('X-3')" class="class-btn px-3.5 py-1 rounded-full text-xs font-medium transition whitespace-nowrap text-primary-700 hover:text-primary-950 hover:bg-primary-50/80" data-class="X-3">
+            X-3
+          </button>
+          <button onclick="changeClassFilter('X-4')" class="class-btn px-3.5 py-1 rounded-full text-xs font-medium transition whitespace-nowrap text-primary-700 hover:text-primary-950 hover:bg-primary-50/80" data-class="X-4">
+            X-4
+          </button>
+          <button onclick="changeClassFilter('X-5')" class="class-btn px-3.5 py-1 rounded-full text-xs font-medium transition whitespace-nowrap text-primary-700 hover:text-primary-950 hover:bg-primary-50/80" data-class="X-5">
+            X-5
+          </button>
+        </div>
+
+        <!-- Search Input -->
+        <div class="relative w-full sm:w-60">
+          <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-primary-500"></i>
+          <input 
+            type="text" 
+            id="search-student" 
+            placeholder="Cari nama / NISN..." 
+            class="w-full pl-9 pr-3.5 py-1.5 bg-primary-50 border border-primary-200 text-xs text-primary-950 placeholder-primary-500 rounded-full focus:outline-none focus:border-primary-950 transition"
+          >
+        </div>
+      </div>
+
+      <!-- Desktop Table View -->
+      <div class="hidden lg:block bg-primary-50 border border-primary-200 rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-primary-100/60 text-xs text-primary-800 border-b border-primary-200">
+              <th class="py-3.5 px-6 font-medium">Nama Siswa</th>
+              <th class="py-3.5 px-4 font-medium">NISN</th>
+              <th class="py-3.5 px-4 text-center font-medium">Kehadiran</th>
+              <th class="py-3.5 px-4 text-center font-medium">Presensi (H/I/S/A)</th>
+              <th class="py-3.5 px-4 text-center font-medium">Tugas</th>
+              <th class="py-3.5 px-4 text-center font-medium">UH</th>
+              <th class="py-3.5 px-4 text-center font-medium">UTS</th>
+              <th class="py-3.5 px-6 text-center font-medium text-primary-950">UAS</th>
+            </tr>
+          </thead>
+          <tbody id="student-table-body" class="divide-y divide-primary-200 text-sm">
+            <tr>
+              <td colspan="8" class="py-8 text-center text-primary-500">
+                <i data-lucide="loader" class="w-5 h-5 animate-spin mx-auto mb-2 text-primary-950"></i>
+                Mengambil data siswa...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Cards View -->
+      <div id="student-mobile-cards" class="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        <div class="col-span-full py-8 text-center text-primary-500 text-sm">
+          <i data-lucide="loader" class="w-5 h-5 animate-spin mx-auto mb-2 text-primary-950"></i>
+          Mengambil data siswa...
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE GURU SECTION (PERSIS FORMAT ANTHONY COMO NUDGE) -->
+  <section class="py-14 md:py-18 border-t border-primary-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="grid grid-cols-1 md:grid-cols-6 gap-8 md:gap-12 items-center">
+        
+        <figure class="order-2 md:order-1 md:col-span-4 space-y-4">
+          <blockquote class="text-xl sm:text-2xl lg:text-3xl font-medium text-primary-900 tracking-tight leading-snug">
+            "Fisika mengajarkan kita bahwa setiap <span class="nudge-highlight">aksi selalu melahirkan reaksi</span>. Keteraturan belajar dan kehadiran Anda hari ini adalah energi penentu keberhasilan masa depan."
+          </blockquote>
+          <figcaption class="pt-2">
+            <cite class="text-sm sm:text-base font-medium text-primary-950 not-italic block">
+              Pak Dul
+            </cite>
+            <p class="text-xs text-primary-600 mt-0.5">
+              Guru Mata Pelajaran Fisika • SMAN 1 HALTIM
+            </p>
+          </figcaption>
+        </figure>
+
+        <div class="order-1 md:order-2 md:col-span-2 flex justify-center">
+          <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-full overflow-hidden border-2 border-primary-300 shadow-sm bg-primary-200">
+            <img 
+              src="pak-dul.jpg" 
+              alt="Pak Dul" 
+              class="w-full h-full object-cover object-top"
+            >
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- MINIMAL FOOTER -->
+  <footer class="bg-primary-50 bg-gradient-to-t from-primary-300/30 border-t border-primary-200 py-10 px-4">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-primary-600">
+      <div class="flex items-center gap-2.5">
+        <div class="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center bg-white border border-primary-200 p-0.5 shrink-0">
+          <img src="logo-sman1-haltim.png" alt="Logo SMAN 1 HALTIM" class="w-full h-full object-contain">
+        </div>
+        <span>Portal Pembelajaran Fisika Kelas X • SMAN 1 HALTIM</span>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <a href="#about" class="text-primary-700 hover:text-primary-950 transition-colors">Tentang</a>
+        <a href="#materi" class="text-primary-700 hover:text-primary-950 transition-colors">Materi</a>
+        <a href="#data-siswa" class="text-primary-700 hover:text-primary-950 transition-colors">Presensi</a>
+        <a href="admin.html" class="text-primary-950 hover:underline font-semibold">Portal Guru</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // ====================================================================
+    // 1. SUPABASE CONFIGURATION
+    // ====================================================================
+    const SUPABASE_URL = 'https://qfudqeayxfeajxutowmx.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_llJOZ5WfJFWCuUsBtSjrCg_9L__hCui';
+
+    let supabaseClient = null;
+    const isConfigured = SUPABASE_URL && !SUPABASE_URL.includes('YOUR_PROJECT_ID');
+
+    if (isConfigured) {
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    // ====================================================================
+    // 2. DATA CADANGAN DEMO
+    // ====================================================================
+    const fallbackAnnouncements = [
+      {
+        id: '1',
+        title: 'Penilaian Harian (UH) 1: Pengukuran Presisi & Vektor',
+        content: 'Seluruh siswa kelas X (X-1 s/d X-5) diharapkan membawa jangka sorong dan alat tulis lengkap untuk pelaksanaan asesmen di lab fisika.',
+        is_important: true,
+        created_at: '2026-10-14T08:00:00Z'
+      },
+      {
+        id: '2',
+        title: 'Batas Pengumpulan Laporan Praktikum Jangka Sorong',
+        content: 'Batas akhir pengumpulan berkas fisik laporan praktikum pengukuran mikrometer sekrup adalah Jumat pukul 14.00 WIT di meja Pak Dul.',
+        is_important: false,
+        created_at: '2026-10-12T10:00:00Z'
+      },
+      {
+        id: '3',
+        title: 'Simulasi Virtual Lab PhET: Dinamika Gerak Newton',
+        content: 'Modul simulasi interaktif gerak lurus dan bidang miring sudah bisa diakses melalui tautan modul materi nomor 4.',
+        is_important: false,
+        created_at: '2026-10-09T07:30:00Z'
+      }
+    ];
+
+    const fallbackMaterials = [
+      {
+        id: 'm1',
+        title: 'Hakikat Fisika, Metode Ilmiah, & Pengukuran Presisi',
+        description: 'Membaca skala jangka sorong, mikrometer sekrup, aturan angka penting, dan ketidakpastian eksperimental.',
+        file_url: 'https://drive.google.com'
+      },
+      {
+        id: 'm2',
+        title: 'Analisis Vektor Dua Dimensi & Koordinat Kartesius',
+        description: 'Menghitung resultan vektor menggunakan metode poligon, jajar genjang, dan metode analitis komponen sumbu.',
+        file_url: 'https://drive.google.com'
+      },
+      {
+        id: 'm3',
+        title: 'Kinematika Gerak Lurus Beraturan (GLB dan GLBB)',
+        description: 'Analisis perpindahan, kecepatan, percepatan, gerak vertikal ke atas, dan gerak jatuh bebas disertai grafik v-t.',
+        file_url: 'https://youtube.com'
+      },
+      {
+        id: 'm4',
+        title: 'Dinamika Gerak: Hukum-Hukum Newton tentang Gerak',
+        description: 'Aplikasi Hukum I, II, dan III Newton pada bidang datar licin/kasar, bidang miring, dan sistem katrol.',
+        file_url: 'https://youtube.com'
+      },
+      {
+        id: 'm5',
+        title: 'Usaha, Energi Mekanik, & Energi Terbarukan di HALTIM',
+        description: 'Teorema usaha-energi kinetik serta eksplorasi potensi energi surya dan angin di Kepulauan Maluku Utara.',
+        file_url: 'https://drive.google.com'
+      }
+    ];
+
+    const fallbackStudents = [
+      { id: 's1', name: 'Ahmad Fathanah Sangaji', nisn: '0089123401', class_name: 'X-1', hadir: 18, izin: 1, sakit: 1, alfa: 0, pct: 90, tugas: 88, uh: 85, uts: 90, uas: 87 },
+      { id: 's2', name: 'Nurul Aulia Maba', nisn: '0089123402', class_name: 'X-1', hadir: 20, izin: 0, sakit: 0, alfa: 0, pct: 100, tugas: 95, uh: 92, uts: 94, uas: 96 },
+      { id: 's3', name: 'Rivaldo Boki', nisn: '0089123403', class_name: 'X-1', hadir: 17, izin: 2, sakit: 1, alfa: 0, pct: 85, tugas: 80, uh: 78, uts: 82, uas: 84 },
+      
+      { id: 's4', name: 'Siti Rahmawati Wasile', nisn: '0089223401', class_name: 'X-2', hadir: 19, izin: 1, sakit: 0, alfa: 0, pct: 95, tugas: 91, uh: 89, uts: 92, uas: 90 },
+      { id: 's5', name: 'Dimas Tri Tobelo', nisn: '0089223402', class_name: 'X-2', hadir: 16, izin: 2, sakit: 1, alfa: 1, pct: 80, tugas: 78, uh: 75, uts: 80, uas: 82 },
+      
+      { id: 's6', name: 'Fahrul Subaim', nisn: '0089323401', class_name: 'X-3', hadir: 19, izin: 0, sakit: 1, alfa: 0, pct: 95, tugas: 86, uh: 84, uts: 88, uas: 85 },
+      { id: 's7', name: 'Dewi Lestari Buli', nisn: '0089423401', class_name: 'X-4', hadir: 20, izin: 0, sakit: 0, alfa: 0, pct: 100, tugas: 94, uh: 90, uts: 92, uas: 95 },
+      { id: 's8', name: 'Zulkifli Kota Maba', nisn: '0089523401', class_name: 'X-5', hadir: 18, izin: 1, sakit: 0, alfa: 1, pct: 90, tugas: 82, uh: 80, uts: 85, uas: 83 }
+    ];
+
+    let currentClass = 'X-1';
+    let allMaterials = [];
+    let allStudentsData = [];
+    let liveStudentCount = 0;
+    let liveMaterialCount = 0;
+
+    function updateIndexDbBadge(isLive, stuCount) {
+      const badge = document.getElementById('index-db-badge');
+      const dot = document.getElementById('index-db-dot');
+      const text = document.getElementById('index-db-text');
+      if (!badge || !dot || !text) return;
+
+      if (isLive && stuCount > 0) {
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+        text.innerText = `Supabase Live (${stuCount} Siswa)`;
+        badge.className = 'hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-emerald-100/90 text-emerald-900 border border-emerald-300';
+      } else if (isLive && stuCount === 0) {
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+        text.innerText = 'Supabase Terhubung (Live)';
+        badge.className = 'hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-emerald-100/90 text-emerald-900 border border-emerald-300';
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-500';
+        text.innerText = 'Mode Cadangan';
+        badge.className = 'hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-amber-100/80 text-amber-900 border border-amber-300';
+      }
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return 'Terbaru';
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    // ====================================================================
+    // 3. LOAD PENGUMUMAN
+    // ====================================================================
+    async function loadAnnouncements() {
+      const container = document.getElementById('announcement-container');
+      let data = fallbackAnnouncements;
+
+      if (isConfigured && supabaseClient) {
+        try {
+          const { data: remoteData, error } = await supabaseClient
+            .from('announcements')
+            .select('*')
+            .order('created_at', { ascending: false });
+          if (!error && remoteData && remoteData.length > 0) {
+            data = remoteData;
+          }
+        } catch (e) {
+          console.warn('Gagal fetch pengumuman Supabase, pakai fallback', e);
+        }
+      }
+
+      container.innerHTML = data.map(item => `
+        <div class="rounded-2xl bg-primary-100/70 border border-primary-200 p-6 flex flex-col justify-between hover:border-primary-300 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs text-primary-600 font-mono">${formatDate(item.created_at)}</span>
+              ${item.is_important ? `
+                <span class="inline-block font-medium rounded-full bg-primary-950 text-primary-50 px-2.5 py-0.5 text-[10px]">
+                  Penting
+                </span>
+              ` : ''}
+            </div>
+            <h3 class="text-base font-medium text-primary-950 mb-2 leading-snug">${item.title}</h3>
+            <p class="text-xs sm:text-sm text-primary-700 leading-relaxed font-normal">${item.content}</p>
+          </div>
+          <div class="mt-5 pt-3 border-t border-primary-200 flex items-center gap-2 text-xs text-primary-600">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary-950"></span>
+            <span>Pak Dul • Guru Fisika</span>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    // ====================================================================
+    // 4. LOAD MATERI
+    // ====================================================================
+    async function loadMaterials() {
+      allMaterials = fallbackMaterials;
+
+      if (isConfigured && supabaseClient) {
+        try {
+          const { data: remoteData, error } = await supabaseClient
+            .from('materials')
+            .select('*')
+            .order('created_at', { ascending: true });
+          if (!error && remoteData && remoteData.length > 0) {
+            allMaterials = remoteData;
+          }
+        } catch (e) {
+          console.warn('Gagal fetch materi Supabase, pakai fallback', e);
+        }
+      }
+
+      renderMaterials(allMaterials);
+    }
+
+    function renderMaterials(list) {
+      const container = document.getElementById('materi-container');
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center text-primary-500 rounded-2xl bg-primary-100/50 border border-primary-200">
+            Materi tidak ditemukan.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map((m, idx) => {
+        const isVideo = m.file_url && (m.file_url.includes('youtube') || m.file_url.includes('youtu.be'));
+        return `
+          <div class="rounded-2xl bg-primary-100/60 hover:bg-primary-100 border border-primary-200 p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all">
+            <div class="max-w-xl">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs font-mono font-medium text-primary-600">0${idx + 1}</span>
+                <span class="text-primary-300">•</span>
+                <span class="text-[11px] text-primary-700 font-medium uppercase tracking-wider">${isVideo ? 'Video Pembahasan' : 'E-Modul PDF'}</span>
+              </div>
+              <h3 class="text-base sm:text-lg font-medium text-primary-950 mb-1 leading-snug">${m.title}</h3>
+              <p class="text-xs sm:text-sm text-primary-700 font-normal leading-relaxed">
+                ${m.description || 'Pelajari konsep teori dan latihan soal mandiri untuk bab ini.'}
+              </p>
+            </div>
+            
+            <div class="shrink-0 w-full sm:w-auto">
+              ${m.file_url ? `
+                <a href="${m.file_url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center font-medium transition-all px-4 py-2 bg-primary-950 text-primary-50 rounded-full hover:bg-primary-900 active:scale-95 text-xs w-full sm:w-auto">
+                  <span>${isVideo ? 'Tonton Video' : 'Buka Modul'}</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5 ml-1.5"></i>
+                </a>
+              ` : `
+                <span class="text-xs text-primary-500">Tautan belum tersedia</span>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    document.getElementById('search-materi').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      const filtered = allMaterials.filter(m => 
+        m.title.toLowerCase().includes(q) || 
+        (m.description && m.description.toLowerCase().includes(q))
+      );
+      renderMaterials(filtered);
+    });
+
+    // ====================================================================
+    // 5. LOAD SISWA
+    // ====================================================================
+    async function loadStudents() {
+      if (isConfigured && supabaseClient) {
+        try {
+          const { data: students, error: err1 } = await supabaseClient.from('students').select('*').order('name');
+          const { data: grades, error: err2 } = await supabaseClient.from('grades').select('*');
+          const { data: attendance, error: err3 } = await supabaseClient.from('attendance').select('*');
+
+          if (!err1 && students && students.length > 0) {
+            allStudentsData = students.map(s => {
+              const studentGrades = (grades || []).filter(g => g.student_id === s.id);
+              const studentAtt = (attendance || []).filter(a => a.student_id === s.id);
+
+              const hadir = studentAtt.filter(a => a.status === 'Hadir').length;
+              const izin = studentAtt.filter(a => a.status === 'Izin').length;
+              const sakit = studentAtt.filter(a => a.status === 'Sakit').length;
+              const alfa = studentAtt.filter(a => a.status === 'Alfa').length;
+              const total = hadir + izin + sakit + alfa;
+              const pct = total > 0 ? Math.round((hadir / total) * 100) : 100;
+
+              const tugas = studentGrades.find(g => g.category === 'Tugas')?.score ?? '-';
+              const uh = studentGrades.find(g => g.category === 'UH')?.score ?? '-';
+              const uts = studentGrades.find(g => g.category === 'UTS')?.score ?? '-';
+              const uas = studentGrades.find(g => g.category === 'UAS')?.score ?? '-';
+
+              return {
+                id: s.id,
+                name: s.name,
+                nisn: s.nisn,
+                class_name: s.class_name,
+                hadir, izin, sakit, alfa, pct,
+                tugas, uh, uts, uas
+              };
+            });
+            updateIndexDbBadge(true, students.length);
+            renderStudentsTable();
+            return;
+          } else if (!err1 && students && students.length === 0) {
+            updateIndexDbBadge(true, 0);
+          }
+        } catch (e) {
+          console.warn('Gagal fetch siswa Supabase, pakai data lokal', e);
+          updateIndexDbBadge(false, 0);
+        }
+      }
+
+      allStudentsData = fallbackStudents;
+      renderStudentsTable();
+    }
+
+    function changeClassFilter(className) {
+      currentClass = className;
+      
+      document.querySelectorAll('.class-btn').forEach(btn => {
+        if (btn.getAttribute('data-class') === className) {
+          btn.className = 'class-btn px-3.5 py-1 rounded-full text-xs font-medium transition whitespace-nowrap bg-primary-950 text-primary-50 shadow-xs';
+        } else {
+          btn.className = 'class-btn px-3.5 py-1 rounded-full text-xs font-medium transition whitespace-nowrap text-primary-700 hover:text-primary-950 hover:bg-primary-50/80';
+        }
+      });
+
+      const label = document.getElementById('current-rekap-label');
+      if (label) {
+        label.innerText = className === 'Semua' ? 'Semua Siswa (Kelas X-1 s/d X-5)' : `Kelas ${className}`;
+      }
+
+      renderStudentsTable();
+    }
+
+    function renderStudentsTable() {
+      const searchQuery = document.getElementById('search-student').value.toLowerCase();
+      const filtered = allStudentsData.filter(s => {
+        const matchClass = currentClass === 'Semua' ? true : s.class_name === currentClass;
+        const matchSearch = s.name.toLowerCase().includes(searchQuery) || s.nisn.includes(searchQuery);
+        return matchClass && matchSearch;
+      });
+
+      const tableBody = document.getElementById('student-table-body');
+      const mobileCards = document.getElementById('student-mobile-cards');
+
+      if (filtered.length === 0) {
+        const emptyMsg = `
+          <div class="col-span-full py-8 text-center text-primary-500 text-sm">
+            Tidak ada data siswa ditemukan ${currentClass === 'Semua' ? '' : 'di Kelas ' + currentClass}.
+          </div>
+        `;
+        tableBody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-primary-500">${emptyMsg}</td></tr>`;
+        mobileCards.innerHTML = emptyMsg;
+        return;
+      }
+
+      // Render Table Baris
+      tableBody.innerHTML = filtered.map(s => {
+        return `
+          <tr class="hover:bg-primary-100/50 transition-colors">
+            <td class="py-3 px-6 font-medium text-primary-950">${s.name}</td>
+            <td class="py-3 px-4 font-mono text-primary-600 text-xs">${s.nisn}</td>
+            <td class="py-3 px-4 text-center font-medium text-primary-950">${s.pct}%</td>
+            <td class="py-3 px-4 text-center font-mono text-xs text-primary-700">
+              <span class="bg-primary-100 px-2 py-0.5 rounded border border-primary-200">
+                ${s.hadir}H / ${s.izin}I / ${s.sakit}S / ${s.alfa}A
+              </span>
+            </td>
+            <td class="py-3 px-4 text-center font-normal text-primary-800">${s.tugas}</td>
+            <td class="py-3 px-4 text-center font-normal text-primary-800">${s.uh}</td>
+            <td class="py-3 px-4 text-center font-normal text-primary-800">${s.uts}</td>
+            <td class="py-3 px-6 text-center font-medium text-primary-950">${s.uas}</td>
+          </tr>
+        `;
+      }).join('');
+
+      // Render Mobile Cards
+      mobileCards.innerHTML = filtered.map(s => {
+        return `
+          <div class="rounded-2xl bg-primary-100/60 border border-primary-200 p-4 space-y-3">
+            <div class="flex items-start justify-between">
+              <div>
+                <h4 class="font-medium text-primary-950 text-sm leading-snug">${s.name}</h4>
+                <div class="text-[11px] text-primary-600 font-mono mt-0.5">NISN: ${s.nisn}</div>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-primary-200 text-primary-800">
+                ${s.class_name}
+              </span>
+            </div>
+
+            <!-- Attendance Info -->
+            <div class="p-2 rounded-xl bg-primary-50 border border-primary-200 flex items-center justify-between text-xs">
+              <span class="text-primary-700">Kehadiran: <b class="text-primary-950 font-medium">${s.pct}%</b></span>
+              <span class="font-mono text-[11px] text-primary-700">
+                ${s.hadir}H / ${s.izin}I / ${s.sakit}S / ${s.alfa}A
+              </span>
+            </div>
+
+            <!-- 4 Nilai Grid -->
+            <div class="grid grid-cols-4 gap-1.5 text-center text-xs">
+              <div class="p-1.5 rounded-xl bg-primary-50 border border-primary-200">
+                <div class="text-[10px] text-primary-600 uppercase">Tugas</div>
+                <div class="font-medium text-primary-950 mt-0.5">${s.tugas}</div>
+              </div>
+              <div class="p-1.5 rounded-xl bg-primary-50 border border-primary-200">
+                <div class="text-[10px] text-primary-600 uppercase">UH</div>
+                <div class="font-medium text-primary-950 mt-0.5">${s.uh}</div>
+              </div>
+              <div class="p-1.5 rounded-xl bg-primary-50 border border-primary-200">
+                <div class="text-[10px] text-primary-600 uppercase">UTS</div>
+                <div class="font-medium text-primary-950 mt-0.5">${s.uts}</div>
+              </div>
+              <div class="p-1.5 rounded-xl bg-primary-200/70 border border-primary-300">
+                <div class="text-[10px] text-primary-800 uppercase font-medium">UAS</div>
+                <div class="font-medium text-primary-950 mt-0.5">${s.uas}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    document.getElementById('search-student').addEventListener('input', () => {
+      renderStudentsTable();
+    });
+
+    // ====================================================================
+    // 6. DOWNLOAD REKAPITULASI (.CSV / EXCEL)
+    // ====================================================================
+    function downloadRekapCSV() {
+      const searchQuery = document.getElementById('search-student').value.toLowerCase();
+      const filtered = allStudentsData.filter(s => {
+        const matchClass = currentClass === 'Semua' ? true : s.class_name === currentClass;
+        const matchSearch = s.name.toLowerCase().includes(searchQuery) || s.nisn.includes(searchQuery);
+        return matchClass && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        alert('Tidak ada data siswa untuk diunduh.');
+        return;
+      }
+
+      const headers = [
+        'No',
+        'Nama Siswa',
+        'NISN',
+        'Kelas',
+        'Persentase Kehadiran',
+        'Hadir (H)',
+        'Izin (I)',
+        'Sakit (S)',
+        'Alfa (A)',
+        'Nilai Tugas',
+        'Nilai UH',
+        'Nilai UTS',
+        'Nilai UAS'
+      ];
+
+      const rows = filtered.map((s, idx) => [
+        idx + 1,
+        `"${s.name.replace(/"/g, '""')}"`,
+        `'${s.nisn}`, // prefix ' agar NISN format teks tidak hilang nol depannya di Excel
+        s.class_name,
+        `"${s.pct}%"`,
+        s.hadir,
+        s.izin,
+        s.sakit,
+        s.alfa,
+        s.tugas,
+        s.uh,
+        s.uts,
+        s.uas
+      ]);
+
+      // Menggunakan UTF-8 BOM (\uFEFF) agar Microsoft Excel membaca karakter dengan sempurna
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      const filename = currentClass === 'Semua' 
+        ? 'Rekap_Fisika_Semua_Kelas_X_SMAN1_HALTIM.csv' 
+        : `Rekap_Fisika_Kelas_${currentClass}_SMAN1_HALTIM.csv`;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // ====================================================================
+    // 7. INITIALIZATION
+    // ====================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      loadAnnouncements();
+      loadMaterials();
+      loadStudents();
+    });
+  </script>
+</body>
+</html>

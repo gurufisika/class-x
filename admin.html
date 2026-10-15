@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Guru Fisika - Dashboard Admin SMAN 1 HALTIM</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Inter"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            // Palet Warna Alami & Bersih (Senada dengan index.html)
+            primary: {
+              50: '#fcfdfd',
+              100: '#f3f2eb',
+              200: '#e8e6d9',
+              300: '#dcd9c9',
+              400: '#c5c1af',
+              500: '#a9a593',
+              600: '#8c8976',
+              700: '#6f6c5b',
+              800: '#545244',
+              900: '#3b392f',
+              950: '#26251e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --primary-50: #fcfdfd;
+      --primary-100: #f3f2eb;
+      --primary-200: #e8e6d9;
+      --primary-300: #dcd9c9;
+      --primary-700: #6f6c5b;
+      --primary-900: #3b392f;
+      --primary-950: #26251e;
+    }
+
+    body {
+      background-color: var(--primary-50);
+      color: var(--primary-900);
+      font-family: 'Inter', sans-serif;
+      letter-spacing: -0.018em;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection {
+      background-color: var(--primary-950);
+      color: var(--primary-50);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-primary-50 text-primary-900 flex flex-col justify-between">
+
+  <!-- ==================================================================== -->
+  <!-- BAGIAN 1: FORM LOGIN ADMIN (MUNCUL JIKA BELUM LOGIN)                -->
+  <!-- ==================================================================== -->
+  <div id="login-view" class="flex-1 flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-primary-100/90 border border-primary-200 rounded-3xl p-7 sm:p-9 shadow-sm space-y-6">
+      
+      <!-- Tombol Kembali ke Halaman Utama -->
+      <a href="index.html" class="inline-flex items-center gap-1.5 text-xs text-primary-600 hover:text-primary-950 transition-colors">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        <span>Kembali ke Halaman Siswa</span>
+      </a>
+
+      <!-- Header Form Login -->
+      <div class="text-left space-y-1.5">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-10 h-10 rounded-full bg-white border border-primary-200 p-0.5 flex items-center justify-center shadow-xs shrink-0">
+            <img src="logo-sman1-haltim.png" alt="Logo SMAN 1 HALTIM" class="w-full h-full object-contain">
+          </div>
+          <div class="w-7 h-7 rounded-full bg-primary-950 text-primary-50 flex items-center justify-center shadow-xs">
+            <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+        <h1 class="text-2xl font-medium tracking-tight text-primary-950">Login Guru Fisika</h1>
+        <p class="text-xs sm:text-sm text-primary-700 font-normal leading-relaxed">
+          Portal Guru Fisika SMAN 1 HALTIM. Silakan masuk menggunakan akun guru yang terdaftar di Supabase.
+        </p>
+      </div>
+
+      <!-- Pesan Notifikasi / Error -->
+      <div id="login-error" class="hidden p-3.5 rounded-xl bg-red-100/90 border border-red-300 text-red-900 text-xs leading-relaxed"></div>
+
+      <!-- Form Login -->
+      <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-primary-800 mb-1.5">Email Guru Terdaftar</label>
+          <input 
+            type="email" 
+            id="login-email" 
+            required 
+            placeholder="guru.fisika@gmail.com"
+            class="w-full px-4 py-2.5 rounded-xl bg-primary-50 border border-primary-200 text-sm text-primary-950 placeholder-primary-400 focus:outline-none focus:border-primary-950 transition"
+          >
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-primary-800 mb-1.5">Kata Sandi</label>
+          <input 
+            type="password" 
+            id="login-password" 
+            required 
+            placeholder="••••••••"
+            class="w-full px-4 py-2.5 rounded-xl bg-primary-50 border border-primary-200 text-sm text-primary-950 placeholder-primary-400 focus:outline-none focus:border-primary-950 transition"
+          >
+        </div>
+
+        <button 
+          type="submit" 
+          id="login-submit-btn"
+          class="w-full py-3 px-4 rounded-full bg-primary-950 text-primary-50 text-sm font-medium hover:bg-primary-900 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2"
+        >
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          <span>Masuk ke Dashboard Guru</span>
+        </button>
+      </form>
+
+      <!-- Proteksi Autentikasi -->
+      <div class="pt-4 border-t border-primary-200/80 text-center">
+        <div class="inline-flex items-center gap-1.5 text-[11px] text-primary-600">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+          <span>Terproteksi Supabase Authentication</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- BAGIAN 2: DASHBOARD ADMIN GURU (MUNCUL JIKA SUDAH LOGIN)            -->
+  <!-- ==================================================================== -->
+  <div id="dashboard-view" class="hidden flex-1 flex flex-col">
+    
+    <!-- TOP BAR DASHBOARD -->
+    <header class="sticky top-0 z-40 bg-primary-50/95 backdrop-blur-md border-b border-primary-200">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        
+        <!-- Brand & Profil Guru -->
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-white border border-primary-200 p-0.5 shrink-0 shadow-xs">
+            <img src="logo-sman1-haltim.png" alt="Logo SMAN 1 HALTIM" class="w-full h-full object-contain">
+          </div>
+          <div>
+            <span class="text-sm font-medium text-primary-950 block leading-tight">Dashboard Guru Fisika</span>
+            <span id="teacher-profile-email" class="text-[11px] text-primary-600 block">SMAN 1 HALTIM</span>
+          </div>
+        </div>
+
+        <!-- Tombol Aksi Kanan -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          <a href="index.html" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-100 border border-primary-200 transition">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            <span>Lihat Halaman Siswa</span>
+          </a>
+          <button 
+            onclick="handleLogout()" 
+            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-primary-100 hover:bg-primary-200/80 text-primary-950 border border-primary-200 transition active:scale-95"
+          >
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            <span>Keluar</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- KONEKSI STATUS BAR SUPABASE & TOMBOL SEED -->
+      <div class="bg-primary-100/90 border-t border-b border-primary-200/70 py-1.5 px-4 text-xs">
+        <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span id="admin-status-dot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="admin-status-text" class="text-primary-800 font-medium">Terhubung ke Supabase Live</span>
+            <span id="admin-data-counts" class="text-primary-500 font-mono text-[11px] hidden sm:inline">(Memuat...)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button 
+              onclick="seedInitialDataToSupabase()" 
+              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary-200 hover:bg-primary-300 text-primary-900 font-medium text-[11px] transition shadow-xs"
+              title="Isi database dengan data contoh Kelas X-1 s/d X-5, materi dan pengumuman"
+            >
+              <i data-lucide="database" class="w-3 h-3"></i>
+              <span>Isi Data Awal Otomatis</span>
+            </button>
+            <button 
+              onclick="loadAllDataFromSupabase(true)" 
+              class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-50 hover:bg-primary-200 text-primary-700 text-[11px] transition"
+              title="Muat ulang data live dari Supabase"
+            >
+              <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+              <span>Segarkan</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB NAVIGATION MENU (TANPA RELOAD) -->
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 flex items-center gap-1 sm:gap-2 overflow-x-auto py-2 scrollbar-none">
+        <button onclick="switchTab('siswa')" id="tab-btn-siswa" class="tab-btn px-4 py-1.5 rounded-full text-xs font-medium transition whitespace-nowrap bg-primary-950 text-primary-50">
+          Kelola Siswa
+        </button>
+        <button onclick="switchTab('absensi')" id="tab-btn-absensi" class="tab-btn px-4 py-1.5 rounded-full text-xs font-medium transition whitespace-nowrap text-primary-800 hover:bg-primary-100">
+          Input Absensi Harian
+        </button>
+        <button onclick="switchTab('nilai')" id="tab-btn-nilai" class="tab-btn px-4 py-1.5 rounded-full text-xs font-medium transition whitespace-nowrap text-primary-800 hover:bg-primary-100">
+          Input Nilai Siswa
+        </button>
+        <button onclick="switchTab('materi')" id="tab-btn-materi" class="tab-btn px-4 py-1.5 rounded-full text-xs font-medium transition whitespace-nowrap text-primary-800 hover:bg-primary-100">
+          Materi & Pengumuman
+        </button>
+      </div>
+    </header>
+
+    <!-- KONTEN UTAMA DASHBOARD -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 w-full flex-1">
+      
+      <!-- ========================================== -->
+      <!-- TAB 1: KELOLA DATA SISWA (CRUD)            -->
+      <!-- ========================================== -->
+      <section id="content-siswa" class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-xl font-medium tracking-tight text-primary-950">Data Siswa Kelas X</h2>
+            <p class="text-xs text-primary-600">Daftar siswa dan rombongan belajar (X-1 s/d X-5). Bisa tambah, edit, dan hapus.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="downloadAdminStudentData()" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-primary-100 hover:bg-primary-200/80 text-primary-950 border border-primary-200 rounded-full text-xs font-medium active:scale-95 transition shadow-sm">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>Unduh CSV</span>
+            </button>
+            <button onclick="toggleModal('modal-add-student', true)" class="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-950 text-primary-50 rounded-full text-xs font-medium hover:bg-primary-900 active:scale-95 transition">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>Tambah Siswa</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Kelas & Search -->
+        <div class="p-3 bg-primary-100/70 border border-primary-200 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="flex items-center gap-1 overflow-x-auto w-full sm:w-auto">
+            <span class="text-xs text-primary-600 mr-1">Kelas:</span>
+            <button onclick="setStudentClassFilter('Semua')" class="stu-filter-btn px-3 py-1 rounded-full text-xs font-medium bg-primary-950 text-primary-50" data-class="Semua">Semua</button>
+            <button onclick="setStudentClassFilter('X-1')" class="stu-filter-btn px-3 py-1 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200" data-class="X-1">X-1</button>
+            <button onclick="setStudentClassFilter('X-2')" class="stu-filter-btn px-3 py-1 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200" data-class="X-2">X-2</button>
+            <button onclick="setStudentClassFilter('X-3')" class="stu-filter-btn px-3 py-1 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200" data-class="X-3">X-3</button>
+            <button onclick="setStudentClassFilter('X-4')" class="stu-filter-btn px-3 py-1 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200" data-class="X-4">X-4</button>
+            <button onclick="setStudentClassFilter('X-5')" class="stu-filter-btn px-3 py-1 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200" data-class="X-5">X-5</button>
+          </div>
+          <div class="relative w-full sm:w-56">
+            <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-primary-500"></i>
+            <input type="text" id="admin-search-student" oninput="renderAdminStudentTable()" placeholder="Cari siswa / NISN..." class="w-full pl-8 pr-3 py-1.5 bg-primary-50 border border-primary-200 text-xs text-primary-950 rounded-full focus:outline-none focus:border-primary-950">
+          </div>
+        </div>
+
+        <!-- Tabel Siswa -->
+        <div class="bg-primary-50 border border-primary-200 rounded-2xl overflow-hidden shadow-sm">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-primary-100/60 text-xs text-primary-800 border-b border-primary-200">
+                <th class="py-3 px-6 font-medium">Nama Siswa</th>
+                <th class="py-3 px-4 font-medium">NISN</th>
+                <th class="py-3 px-4 font-medium">Kelas</th>
+                <th class="py-3 px-6 text-right font-medium">Aksi (Edit / Hapus)</th>
+              </tr>
+            </thead>
+            <tbody id="admin-student-tbody" class="divide-y divide-primary-200">
+              <!-- Render otomatis via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 2: INPUT ABSENSI HARIAN                -->
+      <!-- ========================================== -->
+      <section id="content-absensi" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-xl font-medium tracking-tight text-primary-950">Input Presensi Harian</h2>
+            <p class="text-xs text-primary-600">Pilih kelas dan tanggal, lalu tandai status kehadiran siswa.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="downloadAdminAttendanceData()" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-primary-100 hover:bg-primary-200/80 text-primary-950 border border-primary-200 rounded-full text-xs font-medium active:scale-95 transition shadow-sm">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>Unduh Presensi (.CSV)</span>
+            </button>
+            <button onclick="saveAttendance()" class="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-950 text-primary-50 rounded-full text-xs font-medium hover:bg-primary-900 active:scale-95 transition shadow-sm">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+              <span>Simpan Presensi</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Kelas & Tanggal Absensi -->
+        <div class="p-4 bg-primary-100/70 border border-primary-200 rounded-2xl space-y-3">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            
+            <!-- Pilihan Kelas -->
+            <div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto">
+              <span class="text-xs text-primary-600 font-medium">Pilih Kelas:</span>
+              <button onclick="setAttendanceClass('X-1')" class="att-class-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-primary-950 text-primary-50" data-class="X-1">X-1</button>
+              <button onclick="setAttendanceClass('X-2')" class="att-class-btn px-3.5 py-1.5 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200" data-class="X-2">X-2</button>
+              <button onclick="setAttendanceClass('X-3')" class="att-class-btn px-3.5 py-1.5 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200" data-class="X-3">X-3</button>
+              <button onclick="setAttendanceClass('X-4')" class="att-class-btn px-3.5 py-1.5 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200" data-class="X-4">X-4</button>
+              <button onclick="setAttendanceClass('X-5')" class="att-class-btn px-3.5 py-1.5 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200" data-class="X-5">X-5</button>
+            </div>
+
+            <!-- Pilihan Tanggal -->
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-primary-600 font-medium">Tanggal:</span>
+              <input type="date" id="att-date" class="px-3 py-1.5 bg-primary-50 border border-primary-200 rounded-xl text-xs text-primary-950 focus:outline-none focus:border-primary-950">
+            </div>
+
+          </div>
+
+          <!-- Aksi Cepat Massal -->
+          <div class="pt-3 border-t border-primary-200 flex items-center justify-between flex-wrap gap-2 text-xs">
+            <span class="text-primary-600">Tandai Sekaligus:</span>
+            <div class="flex items-center gap-1.5">
+              <button onclick="setAllAttendance('Hadir')" class="px-2.5 py-1 rounded-full bg-primary-50 hover:bg-primary-200 border border-primary-200 text-primary-800">Semua Hadir</button>
+              <button onclick="setAllAttendance('Izin')" class="px-2.5 py-1 rounded-full bg-primary-50 hover:bg-primary-200 border border-primary-200 text-primary-800">Semua Izin</button>
+              <button onclick="setAllAttendance('Sakit')" class="px-2.5 py-1 rounded-full bg-primary-50 hover:bg-primary-200 border border-primary-200 text-primary-800">Semua Sakit</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabel Daftar Absensi Siswa -->
+        <div class="bg-primary-50 border border-primary-200 rounded-2xl overflow-hidden shadow-sm">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-primary-100/60 text-xs text-primary-800 border-b border-primary-200">
+                <th class="py-3 px-6 font-medium">Nama Siswa</th>
+                <th class="py-3 px-4 font-medium">NISN</th>
+                <th class="py-3 px-6 text-center font-medium">Status Kehadiran</th>
+              </tr>
+            </thead>
+            <tbody id="admin-attendance-tbody" class="divide-y divide-primary-200">
+              <!-- Render otomatis via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 3: INPUT NILAI SISWA                   -->
+      <!-- ========================================== -->
+      <section id="content-nilai" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-xl font-medium tracking-tight text-primary-950">Input Nilai Siswa</h2>
+            <p class="text-xs text-primary-600">Pilih kelas dan kategori nilai (Tugas, UH, UTS, UAS).</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="downloadAdminGradeData()" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-primary-100 hover:bg-primary-200/80 text-primary-950 border border-primary-200 rounded-full text-xs font-medium active:scale-95 transition shadow-sm">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>Unduh Nilai (.CSV)</span>
+            </button>
+            <button onclick="saveGrades()" class="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-950 text-primary-50 rounded-full text-xs font-medium hover:bg-primary-900 active:scale-95 transition shadow-sm">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+              <span>Simpan Nilai</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Kelas & Kategori Nilai -->
+        <div class="p-4 bg-primary-100/70 border border-primary-200 rounded-2xl space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <div>
+              <span class="block text-xs text-primary-600 font-medium mb-1.5">Pilih Kelas:</span>
+              <div class="flex items-center gap-1.5 overflow-x-auto pb-1">
+                <button onclick="setGradeClass('X-1')" class="grade-class-btn px-3 py-1.5 rounded-full text-xs font-medium bg-primary-950 text-primary-50" data-class="X-1">X-1</button>
+                <button onclick="setGradeClass('X-2')" class="grade-class-btn px-3 py-1.5 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200" data-class="X-2">X-2</button>
+                <button onclick="setGradeClass('X-3')" class="grade-class-btn px-3 py-1.5 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200" data-class="X-3">X-3</button>
+                <button onclick="setGradeClass('X-4')" class="grade-class-btn px-3 py-1.5 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200" data-class="X-4">X-4</button>
+                <button onclick="setGradeClass('X-5')" class="grade-class-btn px-3 py-1.5 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200" data-class="X-5">X-5</button>
+              </div>
+            </div>
+
+            <div>
+              <span class="block text-xs text-primary-600 font-medium mb-1.5">Kategori Nilai:</span>
+              <select id="grade-category" onchange="renderAdminGradeTable()" class="w-full px-3 py-1.5 bg-primary-50 border border-primary-200 rounded-xl text-xs text-primary-950 focus:outline-none focus:border-primary-950">
+                <option value="Tugas">Tugas Terstruktur</option>
+                <option value="UH">Penilaian Harian (UH)</option>
+                <option value="UTS">Penilaian Tengah Semester (UTS)</option>
+                <option value="UAS">Penilaian Akhir Semester (UAS)</option>
+              </select>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tabel Input Nilai Siswa -->
+        <div class="bg-primary-50 border border-primary-200 rounded-2xl overflow-hidden shadow-sm">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-primary-100/60 text-xs text-primary-800 border-b border-primary-200">
+                <th class="py-3 px-6 font-medium">Nama Siswa</th>
+                <th class="py-3 px-4 font-medium">NISN</th>
+                <th class="py-3 px-6 text-right font-medium">Nilai Angka (0 - 100)</th>
+              </tr>
+            </thead>
+            <tbody id="admin-grade-tbody" class="divide-y divide-primary-200">
+              <!-- Render otomatis via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 4: KELOLA MATERI & PENGUMUMAN          -->
+      <!-- ========================================== -->
+      <section id="content-materi" class="hidden space-y-10">
+        
+        <!-- BAGIAN 4A: MATERI -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-medium tracking-tight text-primary-950">Kelola Modul Pembelajaran</h2>
+              <p class="text-xs text-primary-600">Unggah berkas modul (PDF/Word/Video) langsung ke Supabase Storage atau sematkan tautan.</p>
+            </div>
+            <button onclick="toggleModal('modal-add-materi', true)" class="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-950 text-primary-50 rounded-full text-xs font-medium hover:bg-primary-900 active:scale-95 transition">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>Tambah Modul</span>
+            </button>
+          </div>
+
+          <div id="admin-materi-list" class="space-y-3">
+            <!-- Render materi via JS -->
+          </div>
+        </div>
+
+        <hr class="border-t border-primary-200">
+
+        <!-- BAGIAN 4B: PENGUMUMAN -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-medium tracking-tight text-primary-950">Kelola Pengumuman Guru</h2>
+              <p class="text-xs text-primary-600">Publikasikan pesan penting yang tampil di beranda siswa.</p>
+            </div>
+            <button onclick="toggleModal('modal-add-announcement', true)" class="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-950 text-primary-50 rounded-full text-xs font-medium hover:bg-primary-900 active:scale-95 transition">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>Buat Pengumuman</span>
+            </button>
+          </div>
+
+          <div id="admin-announcement-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Render pengumuman via JS -->
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL DIALOGS LENGKAP: TAMBAH & EDIT                                 -->
+  <!-- ==================================================================== -->
+
+  <!-- 1. MODAL: TAMBAH SISWA -->
+  <div id="modal-add-student" class="hidden fixed inset-0 z-50 bg-primary-950/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-primary-50 border border-primary-200 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-medium text-primary-950">Tambah Siswa Baru</h3>
+        <button onclick="toggleModal('modal-add-student', false)" class="text-primary-500 hover:text-primary-950">✕</button>
+      </div>
+      <form onsubmit="handleCreateStudent(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">Nama Lengkap Siswa</label>
+          <input type="text" id="new-student-name" required placeholder="Contoh: Muhammad Boki" class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950">
+        </div>
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">NISN (10 Digit Angka)</label>
+          <input type="text" id="new-student-nisn" required placeholder="Contoh: 0089123456" class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950 font-mono">
+        </div>
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">Rombongan Belajar / Kelas</label>
+          <select id="new-student-class" class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950">
+            <option value="X-1">Kelas X-1</option>
+            <option value="X-2">Kelas X-2</option>
+            <option value="X-3">Kelas X-3</option>
+            <option value="X-4">Kelas X-4</option>
+            <option value="X-5">Kelas X-5</option>
+          </select>
+        </div>
+        <div class="pt-3 flex gap-2">
+          <button type="button" onclick="toggleModal('modal-add-student', false)" class="w-1/2 py-2 bg-primary-100 hover:bg-primary-200 rounded-full font-medium text-primary-800">Batal</button>
+          <button type="submit" id="btn-save-student" class="w-1/2 py-2 bg-primary-950 hover:bg-primary-900 text-primary-50 rounded-full font-medium">Simpan Siswa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. MODAL: EDIT SISWA -->
+  <div id="modal-edit-student" class="hidden fixed inset-0 z-50 bg-primary-950/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-primary-50 border border-primary-200 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-medium text-primary-950">Edit Data Siswa</h3>
+        <button onclick="toggleModal('modal-edit-student', false)" class="text-primary-500 hover:text-primary-950">✕</button>
+      </div>
+      <form onsubmit="handleUpdateStudent(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="edit-student-id">
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">Nama Lengkap Siswa</label>
+          <input type="text" id="edit-student-name" required class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950">
+        </div>
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">NISN (10 Digit Angka)</label>
+          <input type="text" id="edit-student-nisn" required class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950 font-mono">
+        </div>
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">Rombongan Belajar / Kelas</label>
+          <select id="edit-student-class" class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950">
+            <option value="X-1">Kelas X-1</option>
+            <option value="X-2">Kelas X-2</option>
+            <option value="X-3">Kelas X-3</option>
+            <option value="X-4">Kelas X-4</option>
+            <option value="X-5">Kelas X-5</option>
+          </select>
+        </div>
+        <div class="pt-3 flex gap-2">
+          <button type="button" onclick="toggleModal('modal-edit-student', false)" class="w-1/2 py-2 bg-primary-100 hover:bg-primary-200 rounded-full font-medium text-primary-800">Batal</button>
+          <button type="submit" id="btn-update-student" class="w-1/2 py-2 bg-primary-950 hover:bg-primary-900 text-primary-50 rounded-full font-medium">Perbarui Data</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. MODAL: TAMBAH MATERI (DENGAN FILE UPLOAD KE SUPABASE STORAGE) -->
+  <div id="modal-add-materi" class="hidden fixed inset-0 z-50 bg-primary-950/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-primary-50 border border-primary-200 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-medium text-primary-950">Tambah Modul Pembelajaran</h3>
+        <button onclick="toggleModal('modal-add-materi', false)" class="text-primary-500 hover:text-primary-950">✕</button>
+      </div>
+      <form onsubmit="handleCreateMaterial(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">Judul Materi / Bab</label>
+          <input type="text" id="new-mat-title" required placeholder="Contoh: Analisis Vektor Dua Dimensi" class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950">
+        </div>
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">Deskripsi Singkat</label>
+          <textarea id="new-mat-desc" rows="2" placeholder="Rangkuman konsep utama materi ini..." class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950"></textarea>
+        </div>
+        
+        <!-- Opsi 1: Unggah Berkas Langsung -->
+        <div class="p-3 bg-primary-100/70 border border-primary-200 rounded-2xl space-y-1.5">
+          <label class="block font-medium text-primary-950 flex items-center gap-1.5">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+            <span>Unggah Berkas Modul (PDF / Word / Video / Gambar)</span>
+          </label>
+          <input 
+            type="file" 
+            id="new-mat-file" 
+            accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.mp4,.zip" 
+            class="w-full text-xs text-primary-700 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-primary-950 file:text-primary-50 hover:file:bg-primary-800 cursor-pointer"
+          >
+          <p class="text-[10px] text-primary-600">Berkas akan diunggah otomatis ke Supabase Storage (bucket <code>modul-fisika</code>).</p>
+        </div>
+
+        <!-- Opsi 2: Tautan URL Alternatif -->
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">Atau Tautan File / Video (Google Drive / YouTube)</label>
+          <input type="url" id="new-mat-url" placeholder="https://drive.google.com/... atau https://youtube.com/..." class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950">
+        </div>
+
+        <div class="pt-3 flex gap-2">
+          <button type="button" onclick="toggleModal('modal-add-materi', false)" class="w-1/2 py-2 bg-primary-100 hover:bg-primary-200 rounded-full font-medium text-primary-800">Batal</button>
+          <button type="submit" id="btn-save-mat" class="w-1/2 py-2 bg-primary-950 hover:bg-primary-900 text-primary-50 rounded-full font-medium">Terbitkan Modul</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. MODAL: EDIT MATERI -->
+  <div id="modal-edit-materi" class="hidden fixed inset-0 z-50 bg-primary-950/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-primary-50 border border-primary-200 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-medium text-primary-950">Edit Modul Pembelajaran</h3>
+        <button onclick="toggleModal('modal-edit-materi', false)" class="text-primary-500 hover:text-primary-950">✕</button>
+      </div>
+      <form onsubmit="handleUpdateMaterial(event)" class="space-y-3.5 text-xs">
+        <input type="hidden" id="edit-mat-id">
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">Judul Materi / Bab</label>
+          <input type="text" id="edit-mat-title" required class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950">
+        </div>
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">Deskripsi Singkat</label>
+          <textarea id="edit-mat-desc" rows="2" class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950"></textarea>
+        </div>
+        
+        <!-- Unggah Berkas Pengganti -->
+        <div class="p-3 bg-primary-100/70 border border-primary-200 rounded-2xl space-y-1.5">
+          <label class="block font-medium text-primary-950 flex items-center gap-1.5">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+            <span>Ganti Berkas (Pilih jika ingin mengganti file)</span>
+          </label>
+          <input 
+            type="file" 
+            id="edit-mat-file" 
+            accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.mp4,.zip" 
+            class="w-full text-xs text-primary-700 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-primary-950 file:text-primary-50 hover:file:bg-primary-800 cursor-pointer"
+          >
+        </div>
+
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">Tautan File Modul Aktif</label>
+          <input type="url" id="edit-mat-url" class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950">
+        </div>
+
+        <div class="pt-3 flex gap-2">
+          <button type="button" onclick="toggleModal('modal-edit-materi', false)" class="w-1/2 py-2 bg-primary-100 hover:bg-primary-200 rounded-full font-medium text-primary-800">Batal</button>
+          <button type="submit" id="btn-update-mat" class="w-1/2 py-2 bg-primary-950 hover:bg-primary-900 text-primary-50 rounded-full font-medium">Perbarui Modul</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. MODAL: TAMBAH PENGUMUMAN -->
+  <div id="modal-add-announcement" class="hidden fixed inset-0 z-50 bg-primary-950/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-primary-50 border border-primary-200 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-medium text-primary-950">Buat Pengumuman Baru</h3>
+        <button onclick="toggleModal('modal-add-announcement', false)" class="text-primary-500 hover:text-primary-950">✕</button>
+      </div>
+      <form onsubmit="handleCreateAnnouncement(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">Judul Pengumuman</label>
+          <input type="text" id="new-ann-title" required placeholder="Contoh: Jadwal Penilaian Harian Vektor" class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950">
+        </div>
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">Isi Pengumuman</label>
+          <textarea id="new-ann-content" rows="4" required placeholder="Instruksi lengkap kepada siswa..." class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950"></textarea>
+        </div>
+        <div class="flex items-center gap-2 pt-1">
+          <input type="checkbox" id="new-ann-important" class="rounded border-primary-300 text-primary-950 focus:ring-0">
+          <label for="new-ann-important" class="text-primary-800 cursor-pointer">Tandai sebagai pengumuman <b class="text-primary-950">Penting</b></label>
+        </div>
+        <div class="pt-3 flex gap-2">
+          <button type="button" onclick="toggleModal('modal-add-announcement', false)" class="w-1/2 py-2 bg-primary-100 hover:bg-primary-200 rounded-full font-medium text-primary-800">Batal</button>
+          <button type="submit" id="btn-save-ann" class="w-1/2 py-2 bg-primary-950 hover:bg-primary-900 text-primary-50 rounded-full font-medium">Terbitkan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 6. MODAL: EDIT PENGUMUMAN -->
+  <div id="modal-edit-announcement" class="hidden fixed inset-0 z-50 bg-primary-950/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-primary-50 border border-primary-200 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-medium text-primary-950">Edit Pengumuman</h3>
+        <button onclick="toggleModal('modal-edit-announcement', false)" class="text-primary-500 hover:text-primary-950">✕</button>
+      </div>
+      <form onsubmit="handleUpdateAnnouncement(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="edit-ann-id">
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">Judul Pengumuman</label>
+          <input type="text" id="edit-ann-title" required class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950">
+        </div>
+        <div>
+          <label class="block font-medium text-primary-800 mb-1">Isi Pengumuman</label>
+          <textarea id="edit-ann-content" rows="4" required class="w-full px-3 py-2 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 focus:outline-none focus:border-primary-950"></textarea>
+        </div>
+        <div class="flex items-center gap-2 pt-1">
+          <input type="checkbox" id="edit-ann-important" class="rounded border-primary-300 text-primary-950 focus:ring-0">
+          <label for="edit-ann-important" class="text-primary-800 cursor-pointer">Tandai sebagai pengumuman <b class="text-primary-950">Penting</b></label>
+        </div>
+        <div class="pt-3 flex gap-2">
+          <button type="button" onclick="toggleModal('modal-edit-announcement', false)" class="w-1/2 py-2 bg-primary-100 hover:bg-primary-200 rounded-full font-medium text-primary-800">Batal</button>
+          <button type="submit" id="btn-update-ann" class="w-1/2 py-2 bg-primary-950 hover:bg-primary-900 text-primary-50 rounded-full font-medium">Perbarui</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFIKASI -->
+  <div id="toast-msg" class="hidden fixed bottom-6 right-6 z-50 bg-primary-950 text-primary-50 px-4 py-2.5 rounded-full text-xs font-medium shadow-lg flex items-center gap-2 transition-all">
+    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toast-text">Data berhasil disimpan!</span>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- JAVASCRIPT LOGIC LENGKAP                                             -->
+  <!-- ==================================================================== -->
+  <script>
+    // 1. SUPABASE CLIENT CONFIGURATION
+    const SUPABASE_URL = 'https://qfudqeayxfeajxutowmx.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_llJOZ5WfJFWCuUsBtSjrCg_9L__hCui';
+
+    let supabaseClient = null;
+    const isConfigured = Boolean(SUPABASE_URL && !SUPABASE_URL.includes('YOUR_PROJECT_ID'));
+
+    if (isConfigured) {
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    // 2. STATE DATA DASHBOARD (Inisialisasi)
+    let students = [];
+    let materials = [];
+    let announcements = [];
+
+    // Filter & temporary memory state
+    let currentStudentClassFilter = 'Semua';
+    let currentAttClass = 'X-1';
+    let currentGradeClass = 'X-1';
+    let attendanceMap = {}; // { student_id: 'Hadir' | 'Izin' | 'Sakit' | 'Alfa' }
+    let gradeMap = {};      // { student_id: 85 }
+
+    // Inisialisasi Tanggal Hari Ini
+    document.getElementById('att-date').value = new Date().toISOString().split('T')[0];
+
+    // ====================================================================
+    // 3. AUTHENTICATION & SESSION MANAGEMENT
+    // ====================================================================
+    let currentAuthUser = null;
+
+    function updateTeacherProfile(user) {
+      currentAuthUser = user;
+      const el = document.getElementById('teacher-profile-email');
+      if (el && user) {
+        el.innerText = `Pak Dul (${user.email || 'Guru Terverifikasi'})`;
+      }
+    }
+
+    async function checkAuthSession() {
+      // Hapus status demo lokal lama jika ada
+      localStorage.removeItem('guru_logged_in');
+
+      if (isConfigured && supabaseClient) {
+        try {
+          const { data: { session }, error } = await supabaseClient.auth.getSession();
+          if (session && session.user) {
+            updateTeacherProfile(session.user);
+            showDashboard();
+            loadAllDataFromSupabase();
+            return;
+          }
+        } catch (err) {
+          console.warn('Gagal cek sesi Supabase:', err);
+        }
+      }
+
+      // Selalu kunci dan tampilkan login view jika tidak ada sesi Supabase aktif
+      showLogin();
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorBox = document.getElementById('login-error');
+      const submitBtn = document.getElementById('login-submit-btn');
+
+      errorBox.classList.add('hidden');
+      submitBtn.innerHTML = '<span>Memverifikasi akun Supabase...</span>';
+      submitBtn.disabled = true;
+
+      if (!isConfigured || !supabaseClient) {
+        errorBox.innerText = 'Supabase belum terkonfigurasi dengan benar.';
+        errorBox.classList.remove('hidden');
+        submitBtn.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i><span>Masuk ke Dashboard Guru</span>';
+        submitBtn.disabled = false;
+        lucide.createIcons();
+        return;
+      }
+
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) {
+          console.warn('Login Auth Error:', error);
+          if (error.message.toLowerCase().includes('email not confirmed')) {
+            errorBox.innerHTML = `
+              <b>Email Belum Dikonfirmasi di Supabase:</b><br>
+              Akun <b>${email}</b> sudah terdaftar, namun emailnya belum dikonfirmasi.<br>
+              <div class="mt-2 p-2.5 bg-amber-50 rounded-xl text-amber-950 font-normal border border-amber-200">
+                <b>Cara Mengonfirmasi (Hanya 10 detik):</b><br>
+                1. Buka Supabase Dashboard > <b>Authentication</b> > <b>Users</b>.<br>
+                2. Klik ikon titik tiga (⋮) pada email Anda > pilih <b>"Confirm User"</b>.<br>
+                3. Atau di menu <b>Authentication > Providers > Email</b>, matikan centang <i>"Confirm email"</i>.
+              </div>
+            `;
+          } else if (error.message.toLowerCase().includes('invalid login credentials')) {
+            errorBox.innerText = 'Email atau kata sandi salah. Silakan periksa kembali akun yang Anda buat di menu Authentication Supabase.';
+          } else {
+            errorBox.innerText = error.message;
+          }
+          errorBox.classList.remove('hidden');
+          submitBtn.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i><span>Masuk ke Dashboard Guru</span>';
+          submitBtn.disabled = false;
+          lucide.createIcons();
+          return;
+        }
+
+        if (data && data.session && data.user) {
+          updateTeacherProfile(data.user);
+          showDashboard();
+          loadAllDataFromSupabase();
+          showToast(`Selamat datang, ${data.user.email}!`);
+        }
+      } catch (err) {
+        errorBox.innerText = 'Terjadi kesalahan autentikasi: ' + err.message;
+        errorBox.classList.remove('hidden');
+      } finally {
+        submitBtn.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i><span>Masuk ke Dashboard Guru</span>';
+        submitBtn.disabled = false;
+        lucide.createIcons();
+      }
+    }
+
+    async function handleLogout() {
+      if (isConfigured && supabaseClient) {
+        try {
+          await supabaseClient.auth.signOut();
+        } catch (e) {
+          console.warn('Logout signOut warning:', e);
+        }
+      }
+      currentAuthUser = null;
+      localStorage.removeItem('guru_logged_in');
+      showLogin();
+      showToast('Anda telah keluar dari Dashboard');
+    }
+
+    function showLogin() {
+      document.getElementById('login-view').classList.remove('hidden');
+      document.getElementById('dashboard-view').classList.add('hidden');
+      lucide.createIcons();
+    }
+
+    function showDashboard() {
+      document.getElementById('login-view').classList.add('hidden');
+      document.getElementById('dashboard-view').classList.remove('hidden');
+      renderAdminStudentTable();
+      renderAdminAttendanceTable();
+      renderAdminGradeTable();
+      renderAdminMaterials();
+      renderAdminAnnouncements();
+      lucide.createIcons();
+    }
+
+    // ====================================================================
+    // 4. TAB NAVIGATION SYSTEM (NO PAGE RELOAD)
+    // ====================================================================
+    function switchTab(tabName) {
+      const tabs = ['siswa', 'absensi', 'nilai', 'materi'];
+      tabs.forEach(t => {
+        const content = document.getElementById(`content-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabName) {
+          content.classList.remove('hidden');
+          btn.className = 'tab-btn px-4 py-1.5 rounded-full text-xs font-medium transition whitespace-nowrap bg-primary-950 text-primary-50';
+        } else {
+          content.classList.add('hidden');
+          btn.className = 'tab-btn px-4 py-1.5 rounded-full text-xs font-medium transition whitespace-nowrap text-primary-800 hover:bg-primary-100';
+        }
+      });
+      lucide.createIcons();
+    }
+
+    // ====================================================================
+    // 5. FETCH & SINKRONISASI DATA SUPABASE
+    // ====================================================================
+    async function loadAllDataFromSupabase(isManualRefresh = false) {
+      if (!isConfigured || !supabaseClient) {
+        updateDbStatus(false, 'Kredensial Supabase belum terkonfigurasi.');
+        return;
+      }
+
+      const countsEl = document.getElementById('admin-data-counts');
+      if (countsEl) countsEl.innerText = '(Memuat data...)';
+
+      try {
+        // Ambil Siswa
+        const { data: stuData, error: stuErr } = await supabaseClient
+          .from('students')
+          .select('*')
+          .order('name');
+        
+        if (stuErr) throw stuErr;
+        students = stuData || [];
+
+        // Ambil Materi
+        const { data: matData, error: matErr } = await supabaseClient
+          .from('materials')
+          .select('*')
+          .order('created_at', { ascending: true });
+        
+        if (matErr) throw matErr;
+        materials = matData || [];
+
+        // Ambil Pengumuman
+        const { data: annData, error: annErr } = await supabaseClient
+          .from('announcements')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        if (annErr) throw annErr;
+        announcements = annData || [];
+
+        // Update indikator status
+        updateDbStatus(true, `${students.length} Siswa, ${materials.length} Materi, ${announcements.length} Pengumuman`);
+
+        renderAdminStudentTable();
+        renderAdminAttendanceTable();
+        renderAdminGradeTable();
+        renderAdminMaterials();
+        renderAdminAnnouncements();
+
+        if (isManualRefresh) {
+          showToast('Data berhasil disegarkan dari Supabase');
+        }
+      } catch (e) {
+        console.error('Gagal memuat data live Supabase:', e);
+        updateDbStatus(false, 'Gagal terhubung: ' + e.message);
+      }
+    }
+
+    function updateDbStatus(isSuccess, detail) {
+      const dot = document.getElementById('admin-status-dot');
+      const text = document.getElementById('admin-status-text');
+      const counts = document.getElementById('admin-data-counts');
+
+      if (!dot || !text) return;
+
+      if (isSuccess) {
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+        text.innerText = 'Terhubung ke Supabase Live';
+        if (counts) {
+          counts.innerText = `(${detail})`;
+          counts.classList.remove('hidden');
+        }
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-red-500';
+        text.innerText = 'Kendala Koneksi Supabase';
+        if (counts) {
+          counts.innerText = `(${detail})`;
+          counts.classList.remove('hidden');
+        }
+      }
+    }
+
+    // ====================================================================
+    // 6. ONE-CLICK SEED DATA AWAL KE SUPABASE
+    // ====================================================================
+    async function seedInitialDataToSupabase() {
+      if (!confirm('Apakah Anda ingin mengisi database Supabase dengan data awal siswa Kelas X-1 s/d X-5, materi, dan pengumuman?')) return;
+      
+      showToast('Sedang mengirim data awal ke Supabase...');
+
+      try {
+        // 1. Data Siswa
+        const seedStudents = [
+          { nisn: '0089123401', name: 'Ahmad Fathanah Sangaji', class_name: 'X-1' },
+          { nisn: '0089123402', name: 'Nurul Aulia Maba', class_name: 'X-1' },
+          { nisn: '0089123403', name: 'Rivaldo Boki', class_name: 'X-1' },
+          { nisn: '0089123404', name: 'Siti Rahmawati Wasile', class_name: 'X-2' },
+          { nisn: '0089123405', name: 'Dimas Tri Tobelo', class_name: 'X-2' },
+          { nisn: '0089123406', name: 'Fahrul Subaim', class_name: 'X-3' },
+          { nisn: '0089123407', name: 'Dewi Lestari Buli', class_name: 'X-4' },
+          { nisn: '0089123408', name: 'Zulkifli Kota Maba', class_name: 'X-5' }
+        ];
+
+        const { error: errStu } = await supabaseClient.from('students').upsert(seedStudents, { onConflict: 'nisn' });
+        if (errStu) throw errStu;
+
+        // 2. Data Materi
+        const seedMaterials = [
+          { title: 'Hakikat Fisika, Metode Ilmiah, & Pengukuran Presisi', description: 'Panduan membaca skala jangka sorong, mikrometer sekrup, angka penting, dan ketidakpastian eksperimental.', file_url: 'https://drive.google.com' },
+          { title: 'Analisis Vektor Dua Dimensi & Koordinat Kartesius', description: 'Menghitung resultan vektor menggunakan metode poligon, jajar genjang, dan penguraian komponen sumbu X-Y.', file_url: 'https://drive.google.com' },
+          { title: 'Kinematika Gerak Lurus Beraturan (GLB & GLBB)', description: 'Analisis perpindahan, kecepatan rata-rata, percepatan konstan, dan gerak vertikal jatuh bebas disertai grafik v-t.', file_url: 'https://youtube.com' }
+        ];
+        await supabaseClient.from('materials').insert(seedMaterials);
+
+        // 3. Data Pengumuman
+        const seedAnnouncements = [
+          { title: 'Penilaian Harian (UH) 1: Pengukuran Presisi & Analisis Vektor', content: 'Diberitahukan kepada seluruh siswa Kelas X (X-1 s/d X-5) bahwa UH 1 akan dilaksanakan di Lab Fisika. Harap membawa jangka sorong pribadi dan kalkulator ilmiah.', is_important: true },
+          { title: 'Batas Akhir Pengumpulan Laporan Praktikum Jangka Sorong', content: 'Laporan fisik praktikum pengukuran presisi dikumpulkan paling lambat hari Jumat pukul 14.00 WIT di meja Pak Dul.', is_important: false }
+        ];
+        await supabaseClient.from('announcements').insert(seedAnnouncements);
+
+        showToast('Data awal berhasil diisikan ke Supabase!');
+        await loadAllDataFromSupabase();
+      } catch (err) {
+        alert('Gagal mengisi data: ' + err.message + '\n\nTips: Jalankan script setup_and_seed.sql di menu SQL Editor Supabase terlebih dahulu agar izin RLS aktif.');
+      }
+    }
+
+    // ====================================================================
+    // 7. TAB 1: CRUD KELOLA SISWA (TAMBAH, EDIT, HAPUS)
+    // ====================================================================
+    function setStudentClassFilter(cls) {
+      currentStudentClassFilter = cls;
+      document.querySelectorAll('.stu-filter-btn').forEach(btn => {
+        if (btn.getAttribute('data-class') === cls) {
+          btn.className = 'stu-filter-btn px-3 py-1 rounded-full text-xs font-medium bg-primary-950 text-primary-50';
+        } else {
+          btn.className = 'stu-filter-btn px-3 py-1 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200';
+        }
+      });
+      renderAdminStudentTable();
+    }
+
+    function renderAdminStudentTable() {
+      const q = (document.getElementById('admin-search-student')?.value || '').toLowerCase();
+      const filtered = students.filter(s => {
+        const matchClass = currentStudentClassFilter === 'Semua' ? true : s.class_name === currentStudentClassFilter;
+        const matchSearch = (s.name || '').toLowerCase().includes(q) || (s.nisn || '').includes(q);
+        return matchClass && matchSearch;
+      });
+
+      const tbody = document.getElementById('admin-student-tbody');
+      if (!tbody) return;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" class="py-8 text-center text-primary-500 text-xs">
+              ${students.length === 0 
+                ? 'Belum ada data siswa di Supabase. Klik <b>"Tambah Siswa"</b> atau <b>"Isi Data Awal Otomatis"</b> di atas.' 
+                : 'Tidak ada siswa yang cocok dengan pencarian / filter kelas.'}
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(s => `
+        <tr class="hover:bg-primary-100/50 transition-colors">
+          <td class="py-3 px-6 font-medium text-primary-950">${s.name}</td>
+          <td class="py-3 px-4 font-mono text-primary-600 text-xs">${s.nisn}</td>
+          <td class="py-3 px-4">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-primary-200 text-primary-800">${s.class_name}</span>
+          </td>
+          <td class="py-3 px-6 text-right space-x-1 whitespace-nowrap">
+            <button onclick="openEditStudentModal('${s.id}')" class="p-1.5 rounded-md text-primary-700 hover:text-primary-950 hover:bg-primary-200 transition" title="Edit Siswa">
+              <i data-lucide="edit-3" class="w-4 h-4"></i>
+            </button>
+            <button onclick="handleDeleteStudent('${s.id}')" class="p-1.5 rounded-md text-primary-400 hover:text-red-600 hover:bg-red-50 transition" title="Hapus Siswa">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    // Tambah Siswa
+    async function handleCreateStudent(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-student-name').value.trim();
+      const nisn = document.getElementById('new-student-nisn').value.trim();
+      const class_name = document.getElementById('new-student-class').value;
+      const btn = document.getElementById('btn-save-student');
+
+      btn.disabled = true;
+      btn.innerText = 'Menyimpan...';
+
+      if (isConfigured && supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('students')
+            .insert([{ name, nisn, class_name }])
+            .select();
+
+          if (error) throw error;
+          if (data && data[0]) students.unshift(data[0]);
+        } catch (err) {
+          alert('Gagal menambah siswa: ' + err.message + '\n\nPastikan script setup_and_seed.sql sudah dijalankan di SQL Editor Supabase untuk izin RLS.');
+          btn.disabled = false;
+          btn.innerText = 'Simpan Siswa';
+          return;
+        }
+      } else {
+        students.unshift({ id: `s-${Date.now()}`, name, nisn, class_name });
+      }
+
+      btn.disabled = false;
+      btn.innerText = 'Simpan Siswa';
+      toggleModal('modal-add-student', false);
+      showToast('Siswa berhasil ditambahkan');
+      renderAdminStudentTable();
+      renderAdminAttendanceTable();
+      renderAdminGradeTable();
+      e.target.reset();
+    }
+
+    // Buka Modal Edit Siswa
+    function openEditStudentModal(id) {
+      const student = students.find(s => s.id === id);
+      if (!student) return;
+
+      document.getElementById('edit-student-id').value = student.id;
+      document.getElementById('edit-student-name').value = student.name;
+      document.getElementById('edit-student-nisn').value = student.nisn;
+      document.getElementById('edit-student-class').value = student.class_name;
+
+      toggleModal('modal-edit-student', true);
+    }
+
+    // Simpan Perubahan Siswa
+    async function handleUpdateStudent(e) {
+      e.preventDefault();
+      const id = document.getElementById('edit-student-id').value;
+      const name = document.getElementById('edit-student-name').value.trim();
+      const nisn = document.getElementById('edit-student-nisn').value.trim();
+      const class_name = document.getElementById('edit-student-class').value;
+      const btn = document.getElementById('btn-update-student');
+
+      btn.disabled = true;
+      btn.innerText = 'Memperbarui...';
+
+      if (isConfigured && supabaseClient) {
+        try {
+          const { error } = await supabaseClient
+            .from('students')
+            .update({ name, nisn, class_name })
+            .eq('id', id);
+
+          if (error) throw error;
+        } catch (err) {
+          alert('Gagal memperbarui siswa: ' + err.message);
+          btn.disabled = false;
+          btn.innerText = 'Perbarui Data';
+          return;
+        }
+      }
+
+      const idx = students.findIndex(s => s.id === id);
+      if (idx !== -1) {
+        students[idx] = { ...students[idx], name, nisn, class_name };
+      }
+
+      btn.disabled = false;
+      btn.innerText = 'Perbarui Data';
+      toggleModal('modal-edit-student', false);
+      showToast('Data siswa berhasil diperbarui');
+      renderAdminStudentTable();
+      renderAdminAttendanceTable();
+      renderAdminGradeTable();
+    }
+
+    // Hapus Siswa
+    async function handleDeleteStudent(id) {
+      const student = students.find(s => s.id === id);
+      const studentName = student ? student.name : 'siswa ini';
+      if (!confirm(`Yakin ingin menghapus ${studentName}? Data absensi dan nilainya juga akan terhapus.`)) return;
+
+      if (isConfigured && supabaseClient) {
+        try {
+          const { error } = await supabaseClient.from('students').delete().eq('id', id);
+          if (error) throw error;
+        } catch (err) {
+          return alert('Gagal menghapus siswa: ' + err.message);
+        }
+      }
+
+      students = students.filter(s => s.id !== id);
+      showToast('Data siswa telah dihapus');
+      renderAdminStudentTable();
+      renderAdminAttendanceTable();
+      renderAdminGradeTable();
+    }
+
+    // ====================================================================
+    // 8. TAB 2: INPUT ABSENSI (BATCH)
+    // ====================================================================
+    function setAttendanceClass(cls) {
+      currentAttClass = cls;
+      document.querySelectorAll('.att-class-btn').forEach(btn => {
+        if (btn.getAttribute('data-class') === cls) {
+          btn.className = 'att-class-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-primary-950 text-primary-50';
+        } else {
+          btn.className = 'att-class-btn px-3.5 py-1.5 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200';
+        }
+      });
+      renderAdminAttendanceTable();
+    }
+
+    function renderAdminAttendanceTable() {
+      const classStudents = students.filter(s => s.class_name === currentAttClass);
+      const tbody = document.getElementById('admin-attendance-tbody');
+      if (!tbody) return;
+
+      if (classStudents.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-primary-500 text-xs">Belum ada siswa di kelas ${currentAttClass}. Tambahkan siswa terlebih dahulu di tab Kelola Siswa.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = classStudents.map(s => {
+        const currentStatus = attendanceMap[s.id] || 'Hadir';
+        return `
+          <tr class="hover:bg-primary-100/50 transition-colors">
+            <td class="py-3 px-6 font-medium text-primary-950">${s.name}</td>
+            <td class="py-3 px-4 font-mono text-primary-600 text-xs">${s.nisn}</td>
+            <td class="py-3 px-6">
+              <div class="flex items-center justify-center gap-1.5">
+                ${['Hadir', 'Izin', 'Sakit', 'Alfa'].map(st => `
+                  <button 
+                    type="button"
+                    onclick="changeStudentAttendance('${s.id}', '${st}')"
+                    class="px-2.5 py-1 rounded-full text-xs font-medium transition ${
+                      currentStatus === st 
+                        ? 'bg-primary-950 text-primary-50' 
+                        : 'bg-primary-100 text-primary-700 hover:bg-primary-200'
+                    }"
+                  >
+                    ${st}
+                  </button>
+                `).join('')}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function changeStudentAttendance(studentId, status) {
+      attendanceMap[studentId] = status;
+      renderAdminAttendanceTable();
+    }
+
+    function setAllAttendance(status) {
+      const classStudents = students.filter(s => s.class_name === currentAttClass);
+      classStudents.forEach(s => {
+        attendanceMap[s.id] = status;
+      });
+      renderAdminAttendanceTable();
+    }
+
+    async function saveAttendance() {
+      const date = document.getElementById('att-date').value;
+      const classStudents = students.filter(s => s.class_name === currentAttClass);
+
+      if (classStudents.length === 0) {
+        return alert('Tidak ada siswa di kelas ini.');
+      }
+
+      if (isConfigured && supabaseClient) {
+        try {
+          const records = classStudents.map(s => ({
+            student_id: s.id,
+            date: date,
+            status: attendanceMap[s.id] || 'Hadir'
+          }));
+
+          const { error } = await supabaseClient
+            .from('attendance')
+            .upsert(records, { onConflict: 'student_id,date' });
+
+          if (error) throw error;
+        } catch (err) {
+          return alert('Gagal menyimpan absensi: ' + err.message);
+        }
+      }
+
+      showToast(`Presensi Kelas ${currentAttClass} tanggal ${date} berhasil disimpan!`);
+    }
+
+    // ====================================================================
+    // 9. TAB 3: INPUT NILAI (BATCH)
+    // ====================================================================
+    function setGradeClass(cls) {
+      currentGradeClass = cls;
+      document.querySelectorAll('.grade-class-btn').forEach(btn => {
+        if (btn.getAttribute('data-class') === cls) {
+          btn.className = 'grade-class-btn px-3 py-1.5 rounded-full text-xs font-medium bg-primary-950 text-primary-50';
+        } else {
+          btn.className = 'grade-class-btn px-3 py-1.5 rounded-full text-xs font-medium text-primary-800 hover:bg-primary-200';
+        }
+      });
+      renderAdminGradeTable();
+    }
+
+    function renderAdminGradeTable() {
+      const classStudents = students.filter(s => s.class_name === currentGradeClass);
+      const tbody = document.getElementById('admin-grade-tbody');
+      if (!tbody) return;
+
+      if (classStudents.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-primary-500 text-xs">Belum ada siswa di kelas ${currentGradeClass}.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = classStudents.map(s => {
+        const val = gradeMap[s.id] ?? '';
+        return `
+          <tr class="hover:bg-primary-100/50 transition-colors">
+            <td class="py-3 px-6 font-medium text-primary-950">${s.name}</td>
+            <td class="py-3 px-4 font-mono text-primary-600 text-xs">${s.nisn}</td>
+            <td class="py-3 px-6 text-right">
+              <input 
+                type="number" 
+                min="0" 
+                max="100" 
+                value="${val}" 
+                placeholder="0"
+                oninput="gradeMap['${s.id}'] = this.value"
+                class="w-20 text-right px-3 py-1.5 bg-primary-100/60 border border-primary-200 rounded-xl text-primary-950 font-mono font-medium focus:outline-none focus:border-primary-950"
+              >
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function saveGrades() {
+      const category = document.getElementById('grade-category').value;
+      const classStudents = students.filter(s => s.class_name === currentGradeClass);
+
+      if (classStudents.length === 0) return alert('Tidak ada siswa di kelas ini.');
+
+      if (isConfigured && supabaseClient) {
+        try {
+          const records = classStudents
+            .filter(s => gradeMap[s.id] !== undefined && gradeMap[s.id] !== '')
+            .map(s => ({
+              student_id: s.id,
+              category: category,
+              score: parseFloat(gradeMap[s.id])
+            }));
+
+          if (records.length > 0) {
+            const { error } = await supabaseClient.from('grades').insert(records);
+            if (error) throw error;
+          }
+        } catch (err) {
+          return alert('Gagal menyimpan nilai: ' + err.message);
+        }
+      }
+
+      showToast(`Nilai ${category} Kelas ${currentGradeClass} berhasil disimpan!`);
+    }
+
+    // ====================================================================
+    // 10. TAB 4: KELOLA MATERI & PENGUMUMAN (UPLOAD FILE & CRUD)
+    // ====================================================================
+    function renderAdminMaterials() {
+      const container = document.getElementById('admin-materi-list');
+      if (!container) return;
+
+      if (materials.length === 0) {
+        container.innerHTML = `<div class="p-4 text-xs text-primary-500 bg-primary-100/40 rounded-xl">Belum ada modul materi di Supabase. Klik "Tambah Modul" untuk menambahkan.</div>`;
+        return;
+      }
+
+      container.innerHTML = materials.map((m, idx) => `
+        <div class="p-4 bg-primary-100/60 border border-primary-200 rounded-2xl flex items-center justify-between gap-4 hover:border-primary-300 transition">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs font-mono text-primary-600">0${idx + 1}</span>
+              <h4 class="text-sm font-medium text-primary-950 truncate">${m.title}</h4>
+            </div>
+            <p class="text-xs text-primary-700 line-clamp-1 mb-1.5">${m.description || 'Tidak ada deskripsi.'}</p>
+            ${m.file_url ? `
+              <a href="${m.file_url}" target="_blank" class="inline-flex items-center gap-1 text-[11px] text-primary-900 font-medium underline">
+                <i data-lucide="external-link" class="w-3 h-3"></i>
+                <span class="truncate max-w-xs">${m.file_url}</span>
+              </a>
+            ` : '<span class="text-[11px] text-primary-500 italic">Tanpa tautan berkas</span>'}
+          </div>
+          <div class="flex items-center gap-1 shrink-0">
+            <button onclick="openEditMaterialModal('${m.id}')" class="p-1.5 rounded-md text-primary-700 hover:text-primary-950 hover:bg-primary-200 transition" title="Edit Materi">
+              <i data-lucide="edit-3" class="w-4 h-4"></i>
+            </button>
+            <button onclick="handleDeleteMaterial('${m.id}')" class="p-1.5 rounded-md text-primary-400 hover:text-red-600 hover:bg-red-50 transition" title="Hapus Materi">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    // Tambah Modul Materi (Bisa Upload Berkas ke Supabase Storage)
+    async function handleCreateMaterial(e) {
+      e.preventDefault();
+      const title = document.getElementById('new-mat-title').value.trim();
+      const description = document.getElementById('new-mat-desc').value.trim();
+      let file_url = document.getElementById('new-mat-url').value.trim();
+      const fileInput = document.getElementById('new-mat-file');
+      const btn = document.getElementById('btn-save-mat');
+
+      btn.disabled = true;
+      btn.innerText = 'Memproses...';
+
+      // Jika guru memilih file lokal, unggah ke Supabase Storage
+      if (fileInput && fileInput.files && fileInput.files[0] && isConfigured && supabaseClient) {
+        const file = fileInput.files[0];
+        btn.innerText = 'Mengunggah berkas...';
+        showToast('Mengunggah berkas ke Supabase Storage...');
+
+        try {
+          const fileExt = file.name.split('.').pop();
+          const cleanName = file.name.replace(/[^a-zA-Z0-9]/g, '_');
+          const filePath = `${Date.now()}_${cleanName}.${fileExt}`;
+
+          const { data: uploadData, error: uploadErr } = await supabaseClient.storage
+            .from('modul-fisika')
+            .upload(filePath, file, { cacheControl: '3600', upsert: true });
+
+          if (uploadErr) {
+            console.warn('Storage upload notice:', uploadErr);
+            alert(`Catatan Storage: Berkas gagal diunggah ke storage (${uploadErr.message}).\n\nTips: Pastikan bucket "modul-fisika" sudah dibuat di Supabase Storage. Menggunakan tautan URL pengganti.`);
+          } else {
+            const { data: publicUrlData } = supabaseClient.storage
+              .from('modul-fisika')
+              .getPublicUrl(filePath);
+            
+            if (publicUrlData && publicUrlData.publicUrl) {
+              file_url = publicUrlData.publicUrl;
+            }
+          }
+        } catch (err) {
+          console.warn('Upload catch:', err);
+        }
+      }
+
+      if (isConfigured && supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('materials')
+            .insert([{ title, description, file_url }])
+            .select();
+
+          if (error) throw error;
+          if (data && data[0]) materials.push(data[0]);
+        } catch (err) {
+          alert('Gagal menambah materi: ' + err.message);
+          btn.disabled = false;
+          btn.innerText = 'Terbitkan Modul';
+          return;
+        }
+      } else {
+        materials.push({ id: `m-${Date.now()}`, title, description, file_url });
+      }
+
+      btn.disabled = false;
+      btn.innerText = 'Terbitkan Modul';
+      toggleModal('modal-add-materi', false);
+      showToast('Modul materi berhasil diterbitkan');
+      renderAdminMaterials();
+      e.target.reset();
+    }
+
+    // Buka Modal Edit Materi
+    function openEditMaterialModal(id) {
+      const mat = materials.find(m => m.id === id);
+      if (!mat) return;
+
+      document.getElementById('edit-mat-id').value = mat.id;
+      document.getElementById('edit-mat-title').value = mat.title;
+      document.getElementById('edit-mat-desc').value = mat.description || '';
+      document.getElementById('edit-mat-url').value = mat.file_url || '';
+      document.getElementById('edit-mat-file').value = '';
+
+      toggleModal('modal-edit-materi', true);
+    }
+
+    // Simpan Perubahan Materi
+    async function handleUpdateMaterial(e) {
+      e.preventDefault();
+      const id = document.getElementById('edit-mat-id').value;
+      const title = document.getElementById('edit-mat-title').value.trim();
+      const description = document.getElementById('edit-mat-desc').value.trim();
+      let file_url = document.getElementById('edit-mat-url').value.trim();
+      const fileInput = document.getElementById('edit-mat-file');
+      const btn = document.getElementById('btn-update-mat');
+
+      btn.disabled = true;
+      btn.innerText = 'Memperbarui...';
+
+      // Unggah file jika diganti
+      if (fileInput && fileInput.files && fileInput.files[0] && isConfigured && supabaseClient) {
+        const file = fileInput.files[0];
+        btn.innerText = 'Mengunggah file baru...';
+        showToast('Mengunggah berkas baru...');
+
+        try {
+          const fileExt = file.name.split('.').pop();
+          const cleanName = file.name.replace(/[^a-zA-Z0-9]/g, '_');
+          const filePath = `${Date.now()}_${cleanName}.${fileExt}`;
+
+          const { error: uploadErr } = await supabaseClient.storage
+            .from('modul-fisika')
+            .upload(filePath, file, { cacheControl: '3600', upsert: true });
+
+          if (!uploadErr) {
+            const { data: pubData } = supabaseClient.storage.from('modul-fisika').getPublicUrl(filePath);
+            if (pubData && pubData.publicUrl) file_url = pubData.publicUrl;
+          }
+        } catch (err) {
+          console.warn('Update upload err:', err);
+        }
+      }
+
+      if (isConfigured && supabaseClient) {
+        try {
+          const { error } = await supabaseClient
+            .from('materials')
+            .update({ title, description, file_url })
+            .eq('id', id);
+
+          if (error) throw error;
+        } catch (err) {
+          alert('Gagal memperbarui materi: ' + err.message);
+          btn.disabled = false;
+          btn.innerText = 'Perbarui Modul';
+          return;
+        }
+      }
+
+      const idx = materials.findIndex(m => m.id === id);
+      if (idx !== -1) {
+        materials[idx] = { ...materials[idx], title, description, file_url };
+      }
+
+      btn.disabled = false;
+      btn.innerText = 'Perbarui Modul';
+      toggleModal('modal-edit-materi', false);
+      showToast('Modul materi berhasil diperbarui');
+      renderAdminMaterials();
+    }
+
+    // Hapus Materi
+    async function handleDeleteMaterial(id) {
+      if (!confirm('Hapus modul materi ini?')) return;
+
+      if (isConfigured && supabaseClient) {
+        try {
+          const { error } = await supabaseClient.from('materials').delete().eq('id', id);
+          if (error) throw error;
+        } catch (err) {
+          return alert('Gagal menghapus materi: ' + err.message);
+        }
+      }
+
+      materials = materials.filter(m => m.id !== id);
+      showToast('Materi berhasil dihapus');
+      renderAdminMaterials();
+    }
+
+    // Render Pengumuman
+    function renderAdminAnnouncements() {
+      const container = document.getElementById('admin-announcement-list');
+      if (!container) return;
+
+      if (announcements.length === 0) {
+        container.innerHTML = `<div class="p-4 text-xs text-primary-500 bg-primary-100/40 rounded-xl col-span-full">Belum ada pengumuman di Supabase. Klik "Buat Pengumuman" untuk mempublikasikan.</div>`;
+        return;
+      }
+
+      container.innerHTML = announcements.map(a => `
+        <div class="p-5 bg-primary-100/60 border border-primary-200 rounded-2xl flex flex-col justify-between hover:border-primary-300 transition">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-medium text-primary-600 uppercase">Pemberitahuan</span>
+              ${a.is_important ? `<span class="px-2 py-0.5 rounded-full bg-primary-950 text-primary-50 text-[9px] font-medium">Penting</span>` : ''}
+            </div>
+            <h4 class="text-sm font-medium text-primary-950 mb-1 leading-snug">${a.title}</h4>
+            <p class="text-xs text-primary-700 line-clamp-3 leading-relaxed font-normal">${a.content}</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-primary-200/70 flex items-center justify-end gap-1">
+            <button onclick="openEditAnnouncementModal('${a.id}')" class="p-1.5 rounded-md text-primary-700 hover:text-primary-950 hover:bg-primary-200 transition" title="Edit Pengumuman">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="handleDeleteAnnouncement('${a.id}')" class="p-1.5 rounded-md text-primary-400 hover:text-red-600 hover:bg-red-50 transition" title="Hapus Pengumuman">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    // Tambah Pengumuman
+    async function handleCreateAnnouncement(e) {
+      e.preventDefault();
+      const title = document.getElementById('new-ann-title').value.trim();
+      const content = document.getElementById('new-ann-content').value.trim();
+      const is_important = document.getElementById('new-ann-important').checked;
+      const btn = document.getElementById('btn-save-ann');
+
+      btn.disabled = true;
+      btn.innerText = 'Menerbitkan...';
+
+      if (isConfigured && supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('announcements')
+            .insert([{ title, content, is_important }])
+            .select();
+
+          if (error) throw error;
+          if (data && data[0]) announcements.unshift(data[0]);
+        } catch (err) {
+          alert('Gagal menambah pengumuman: ' + err.message);
+          btn.disabled = false;
+          btn.innerText = 'Terbitkan';
+          return;
+        }
+      } else {
+        announcements.unshift({ id: `a-${Date.now()}`, title, content, is_important });
+      }
+
+      btn.disabled = false;
+      btn.innerText = 'Terbitkan';
+      toggleModal('modal-add-announcement', false);
+      showToast('Pengumuman berhasil diterbitkan');
+      renderAdminAnnouncements();
+      e.target.reset();
+    }
+
+    // Buka Modal Edit Pengumuman
+    function openEditAnnouncementModal(id) {
+      const ann = announcements.find(a => a.id === id);
+      if (!ann) return;
+
+      document.getElementById('edit-ann-id').value = ann.id;
+      document.getElementById('edit-ann-title').value = ann.title;
+      document.getElementById('edit-ann-content').value = ann.content;
+      document.getElementById('edit-ann-important').checked = Boolean(ann.is_important);
+
+      toggleModal('modal-edit-announcement', true);
+    }
+
+    // Simpan Perubahan Pengumuman
+    async function handleUpdateAnnouncement(e) {
+      e.preventDefault();
+      const id = document.getElementById('edit-ann-id').value;
+      const title = document.getElementById('edit-ann-title').value.trim();
+      const content = document.getElementById('edit-ann-content').value.trim();
+      const is_important = document.getElementById('edit-ann-important').checked;
+      const btn = document.getElementById('btn-update-ann');
+
+      btn.disabled = true;
+      btn.innerText = 'Memperbarui...';
+
+      if (isConfigured && supabaseClient) {
+        try {
+          const { error } = await supabaseClient
+            .from('announcements')
+            .update({ title, content, is_important })
+            .eq('id', id);
+
+          if (error) throw error;
+        } catch (err) {
+          alert('Gagal memperbarui pengumuman: ' + err.message);
+          btn.disabled = false;
+          btn.innerText = 'Perbarui';
+          return;
+        }
+      }
+
+      const idx = announcements.findIndex(a => a.id === id);
+      if (idx !== -1) {
+        announcements[idx] = { ...announcements[idx], title, content, is_important };
+      }
+
+      btn.disabled = false;
+      btn.innerText = 'Perbarui';
+      toggleModal('modal-edit-announcement', false);
+      showToast('Pengumuman berhasil diperbarui');
+      renderAdminAnnouncements();
+    }
+
+    // Hapus Pengumuman
+    async function handleDeleteAnnouncement(id) {
+      if (!confirm('Hapus pengumuman ini?')) return;
+
+      if (isConfigured && supabaseClient) {
+        try {
+          const { error } = await supabaseClient.from('announcements').delete().eq('id', id);
+          if (error) throw error;
+        } catch (err) {
+          return alert('Gagal menghapus pengumuman: ' + err.message);
+        }
+      }
+
+      announcements = announcements.filter(a => a.id !== id);
+      showToast('Pengumuman telah dihapus');
+      renderAdminAnnouncements();
+    }
+
+    // ====================================================================
+    // 11. MODAL & TOAST HELPER
+    // ====================================================================
+    function toggleModal(modalId, show) {
+      const modal = document.getElementById(modalId);
+      if (!modal) return;
+      if (show) {
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById('toast-msg');
+      if (!toast) return;
+      document.getElementById('toast-text').innerText = text;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+
+    // ====================================================================
+    // 12. EXPORT REKAPITULASI DATA KE CSV (EXCEL)
+    // ====================================================================
+    function downloadAdminStudentData() {
+      const q = (document.getElementById('admin-search-student')?.value || '').toLowerCase();
+      const filtered = students.filter(s => {
+        const matchClass = currentStudentClassFilter === 'Semua' ? true : s.class_name === currentStudentClassFilter;
+        const matchSearch = (s.name || '').toLowerCase().includes(q) || (s.nisn || '').includes(q);
+        return matchClass && matchSearch;
+      });
+
+      if (filtered.length === 0) return alert('Tidak ada data siswa untuk diunduh.');
+
+      const headers = ['No', 'Nama Siswa', 'NISN', 'Kelas'];
+      const rows = filtered.map((s, idx) => [
+        idx + 1,
+        `"${(s.name || '').replace(/"/g, '""')}"`,
+        `'${s.nisn || ''}`,
+        s.class_name || ''
+      ]);
+
+      downloadCSV(headers, rows, `Data_Siswa_Kelas_${currentStudentClassFilter}_SMAN1_HALTIM.csv`);
+    }
+
+    function downloadAdminAttendanceData() {
+      const date = document.getElementById('att-date').value;
+      const classStudents = students.filter(s => s.class_name === currentAttClass);
+
+      if (classStudents.length === 0) return alert('Belum ada siswa di kelas ini.');
+
+      const headers = ['No', 'Nama Siswa', 'NISN', 'Kelas', 'Tanggal', 'Status Kehadiran'];
+      const rows = classStudents.map((s, idx) => [
+        idx + 1,
+        `"${(s.name || '').replace(/"/g, '""')}"`,
+        `'${s.nisn || ''}`,
+        s.class_name || '',
+        date,
+        attendanceMap[s.id] || 'Hadir'
+      ]);
+
+      downloadCSV(headers, rows, `Presensi_Kelas_${currentAttClass}_Tanggal_${date}.csv`);
+    }
+
+    function downloadAdminGradeData() {
+      const category = document.getElementById('grade-category').value;
+      const classStudents = students.filter(s => s.class_name === currentGradeClass);
+
+      if (classStudents.length === 0) return alert('Belum ada siswa di kelas ini.');
+
+      const headers = ['No', 'Nama Siswa', 'NISN', 'Kelas', 'Kategori Asesmen', 'Nilai Angka'];
+      const rows = classStudents.map((s, idx) => [
+        idx + 1,
+        `"${(s.name || '').replace(/"/g, '""')}"`,
+        `'${s.nisn || ''}`,
+        s.class_name || '',
+        category,
+        gradeMap[s.id] !== undefined && gradeMap[s.id] !== '' ? gradeMap[s.id] : '-'
+      ]);
+
+      downloadCSV(headers, rows, `Rekap_Nilai_${category}_Kelas_${currentGradeClass}.csv`);
+    }
+
+    function downloadCSV(headers, rows, filename) {
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // ====================================================================
+    // 13. INIT
+    // ====================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      checkAuthSession();
+    });
+  </script>
+</body>
+</html>
